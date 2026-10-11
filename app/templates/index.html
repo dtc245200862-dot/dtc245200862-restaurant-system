@@ -1,80 +1,113 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card card-custom p-4 text-white" style="background: linear-gradient(135deg, #1e3c72, #2a5298);">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h2 class="fw-bold mb-1">Bảng điều khiển Nhà hàng (Dashboard)</h2>
-                    <p class="mb-0 text-light opacity-75">Quản lý Bàn ăn, Món ăn và Đơn gọi món theo thời gian thực</p>
-                </div>
-                <span class="badge bg-success fs-6 px-3 py-2"><i class="bi bi-check-circle me-1"></i> Hệ thống hoạt động tốt</span>
+<!-- Banner chào mừng hiện đại -->
+<div class="card card-modern p-4 mb-4 text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #1e1b4b, #312e81, #1e293b);">
+    <div class="position-absolute end-0 top-0 bottom-0 d-none d-md-block opacity-10 pe-4 pt-3">
+        <i class="bi bi-cup-straw" style="font-size: 10rem;"></i>
+    </div>
+    <div class="row align-items-center position-relative">
+        <div class="col-lg-8">
+            <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold mb-2">Đề 12 • Hệ thống Đặt món & POS</span>
+            <h2 class="fw-bold mb-1">Bảng điều khiển Quản lý Nhà hàng</h2>
+            <p class="text-light opacity-75 mb-3">Hệ thống đang hoạt động ổn định với cơ chế tự phục hồi, bảo mật SSL và giám sát thời gian thực.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="/orders" class="btn btn-warning fw-semibold px-3 py-2 rounded-pill"><i class="bi bi-plus-circle-fill me-1"></i> Tạo đơn gọi món</a>
+                <a href="/tables" class="btn btn-outline-light px-3 py-2 rounded-pill"><i class="bi bi-grid-3x3-gap me-1"></i> Xem sơ đồ bàn</a>
+                <a href="/menu" class="btn btn-outline-light px-3 py-2 rounded-pill"><i class="bi bi-egg-fried me-1"></i> Cập nhật thực đơn</a>
+            </div>
+        </div>
+        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+            <div class="bg-white bg-opacity-10 p-3 rounded-4 backdrop-blur d-inline-block text-start">
+                <div class="small text-light opacity-75">Doanh thu thời gian thực:</div>
+                <div class="fs-3 fw-bold text-warning">{{ "{:,.0f}".format(orders.revenue) }} đ</div>
+                <div class="small text-success"><i class="bi bi-arrow-up-circle-fill me-1"></i> 100% Giao dịch bảo mật</div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row g-4 mb-4">
-    <div class="col-md-3">
-        <div class="card card-custom p-3 bg-white">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-primary bg-opacity-10 text-primary me-3"><i class="bi bi-grid-3x3-gap"></i></div>
-                <div>
-                    <span class="text-muted small">Tổng số bàn</span>
-                    <h3 class="fw-bold mb-0">{{ tables.total }}</h3>
-                    <small class="text-success">Trống: {{ tables.avail }}</small>
+<!-- 4 Thẻ KPI Metrics Hiện Đại -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-sm-6">
+        <div class="stat-widget card-modern">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted fw-semibold small">TỔNG SỐ BÀN ĂN</span>
+                <div class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary">
+                    <i class="bi bi-grid-fill"></i>
                 </div>
+            </div>
+            <div class="stat-value text-dark">{{ tables.total }}</div>
+            <div class="d-flex align-items-center gap-3 mt-2 small">
+                <span class="text-success fw-semibold"><span class="status-dot dot-available"></span>Trống: {{ tables.avail }}</span>
+                <span class="text-danger fw-semibold"><span class="status-dot dot-occupied"></span>Khách: {{ tables.occ }}</span>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card card-custom p-3 bg-white">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-danger bg-opacity-10 text-danger me-3"><i class="bi bi-people"></i></div>
-                <div>
-                    <span class="text-muted small">Bàn có khách</span>
-                    <h3 class="fw-bold mb-0">{{ tables.occ }}</h3>
-                    <small class="text-warning">Đặt trước: {{ tables.res }}</small>
+
+    <div class="col-xl-3 col-sm-6">
+        <div class="stat-widget card-modern">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted fw-semibold small">BÀN ĐANG PHỤC VỤ</span>
+                <div class="stat-icon-wrapper bg-danger bg-opacity-10 text-danger">
+                    <i class="bi bi-people-fill"></i>
                 </div>
+            </div>
+            <div class="stat-value text-danger">{{ tables.occ }}</div>
+            <div class="d-flex align-items-center gap-2 mt-2 small text-warning fw-semibold">
+                <span class="status-dot dot-reserved"></span>Đã đặt trước: {{ tables.res }} bàn
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card card-custom p-3 bg-white">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-warning bg-opacity-10 text-warning me-3"><i class="bi bi-receipt"></i></div>
-                <div>
-                    <span class="text-muted small">Tổng đơn hàng</span>
-                    <h3 class="fw-bold mb-0">{{ orders.total_orders }}</h3>
-                    <small class="text-primary">Đang nấu: {{ orders.cooking }}</small>
+
+    <div class="col-xl-3 col-sm-6">
+        <div class="stat-widget card-modern">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted fw-semibold small">ĐƠN ĐẶT MÓN</span>
+                <div class="stat-icon-wrapper bg-warning bg-opacity-10 text-warning">
+                    <i class="bi bi-receipt"></i>
                 </div>
+            </div>
+            <div class="stat-value text-dark">{{ orders.total_orders }}</div>
+            <div class="mt-2 small text-primary fw-semibold">
+                <i class="bi bi-hourglass-split me-1"></i>Đang nấu tại bếp: {{ orders.cooking }}
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card card-custom p-3 bg-white">
-            <div class="d-flex align-items-center">
-                <div class="stat-icon bg-success bg-opacity-10 text-success me-3"><i class="bi bi-cash-stack"></i></div>
-                <div>
-                    <span class="text-muted small">Tổng doanh thu</span>
-                    <h3 class="fw-bold mb-0 text-success">{{ "{:,.0f}".format(orders.revenue) }} đ</h3>
-                    <small class="text-muted">Món đang bán: {{ menu_count }}</small>
+
+    <div class="col-xl-3 col-sm-6">
+        <div class="stat-widget card-modern">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted fw-semibold small">MÓN ĂN PHỤC VỤ</span>
+                <div class="stat-icon-wrapper bg-success bg-opacity-10 text-success">
+                    <i class="bi bi-cup-hot-fill"></i>
                 </div>
+            </div>
+            <div class="stat-value text-success">{{ menu_count }}</div>
+            <div class="mt-2 small text-muted">
+                <i class="bi bi-check2-circle text-success me-1"></i>Sẵn sàng gọi món
             </div>
         </div>
     </div>
 </div>
 
+<!-- Đơn hàng gần đây & Biểu đồ trực quan -->
 <div class="row g-4">
     <div class="col-lg-8">
-        <div class="card card-custom bg-white p-4">
-            <h5 class="fw-bold mb-3"><i class="bi bi-clock-history me-2 text-primary"></i>Đơn hàng gần đây</h5>
+        <div class="card card-modern p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history me-2 text-primary"></i>Đơn hàng gọi món gần nhất</h5>
+                    <small class="text-muted">Cập nhật trực tiếp từ hệ thống POS nhà hàng</small>
+                </div>
+                <a href="/orders" class="btn btn-sm btn-outline-primary px-3 rounded-pill">Xem tất cả đơn</a>
+            </div>
+            
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+                <table class="table table-modern align-middle mb-0">
+                    <thead>
                         <tr>
                             <th>Mã đơn</th>
-                            <th>Bàn</th>
+                            <th>Vị trí</th>
                             <th>Khách hàng</th>
                             <th>Tổng tiền</th>
                             <th>Trạng thái</th>
@@ -83,44 +116,102 @@
                     <tbody>
                         {% for o in recent_orders %}
                         <tr>
-                            <td><span class="badge bg-secondary">#{{ o.id }}</span></td>
-                            <td><strong>{{ o.table_number or 'Mang về' }}</strong></td>
-                            <td>{{ o.customer_name }}</td>
-                            <td class="fw-bold text-success">{{ "{:,.0f}".format(o.total_amount) }} đ</td>
+                            <td><span class="badge bg-light text-dark border">#{{ o.id }}</span></td>
                             <td>
-                                {% if o.status == 'pending' %}<span class="badge bg-warning text-dark">Chờ xác nhận</span>
-                                {% elif o.status == 'cooking' %}<span class="badge bg-info text-dark">Đang nấu</span>
-                                {% elif o.status == 'served' %}<span class="badge bg-primary">Đã lên món</span>
-                                {% elif o.status == 'completed' %}<span class="badge bg-success">Hoàn thành</span>
-                                {% else %}<span class="badge bg-danger">Đã hủy</span>{% endif %}
+                                <span class="fw-bold text-dark"><i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ o.table_number or 'Mang về' }}</span>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">{{ o.customer_name }}</div>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-primary fs-6">{{ "{:,.0f}".format(o.total_amount) }} đ</span>
+                            </td>
+                            <td>
+                                {% if o.status == 'pending' %}
+                                    <span class="badge-pill-custom bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25"><i class="bi bi-clock me-1"></i>Chờ xác nhận</span>
+                                {% elif o.status == 'cooking' %}
+                                    <span class="badge-pill-custom bg-info bg-opacity-10 text-info border border-info border-opacity-25"><i class="bi bi-fire me-1"></i>Đang nấu</span>
+                                {% elif o.status == 'served' %}
+                                    <span class="badge-pill-custom bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25"><i class="bi bi-bell-fill me-1"></i>Đã lên món</span>
+                                {% elif o.status == 'completed' %}
+                                    <span class="badge-pill-custom bg-success bg-opacity-10 text-success border border-success border-opacity-25"><i class="bi bi-check-circle-fill me-1"></i>Hoàn thành</span>
+                                {% else %}
+                                    <span class="badge-pill-custom bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Đã hủy</span>
+                                {% endif %}
                             </td>
                         </tr>
                         {% else %}
-                        <tr><td colspan="5" class="text-center text-muted py-4">Chưa có đơn hàng nào</td></tr>
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">Chưa có đơn hàng nào phát sinh.</td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
     <div class="col-lg-4">
-        <div class="card card-custom bg-white p-4 mb-4">
-            <h5 class="fw-bold mb-3"><i class="bi bi-lightning-charge me-2 text-warning"></i>Thao tác nhanh</h5>
-            <div class="d-grid gap-2">
-                <a href="/orders" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Tạo đơn gọi món mới</a>
-                <a href="/tables" class="btn btn-outline-secondary"><i class="bi bi-grid-3x3-gap me-1"></i> Quản lý trạng thái bàn</a>
-                <a href="/menu" class="btn btn-outline-secondary"><i class="bi bi-plus-square me-1"></i> Quản lý thực đơn</a>
+        <!-- Biểu đồ phân bổ trạng thái bàn ăn -->
+        <div class="card card-modern p-4 mb-4">
+            <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-pie-chart-fill me-2 text-warning"></i>Tỷ lệ bàn ăn</h5>
+            <div style="height: 220px; position: relative;">
+                <canvas id="tableChart"></canvas>
+            </div>
+            <div class="d-flex justify-content-around mt-3 small text-center">
+                <div><span class="status-dot dot-available"></span>Trống ({{ tables.avail }})</div>
+                <div><span class="status-dot dot-occupied"></span>Có khách ({{ tables.occ }})</div>
+                <div><span class="status-dot dot-reserved"></span>Đặt trước ({{ tables.res }})</div>
             </div>
         </div>
-        <div class="card card-custom bg-white p-4">
-            <h5 class="fw-bold mb-2"><i class="bi bi-shield-check me-2 text-success"></i>Thông tin đề tài</h5>
-            <ul class="list-unstyled small mb-0">
-                <li class="mb-1"><strong>Đề:</strong> 12 - Quản lý Nhà hàng / Order</li>
-                <li class="mb-1"><strong>Sinh viên:</strong> Hồ Quang Huy</li>
-                <li class="mb-1"><strong>Mã sinh viên:</strong> DTC245200862</li>
-                <li><strong>Stack:</strong> Flask + PostgreSQL + Nginx + Prometheus + Grafana + Loki</li>
-            </ul>
+
+        <!-- Thông tin DevOps & Cấu hình -->
+        <div class="card card-modern p-4" style="background: linear-gradient(180deg, #ffffff, #f8fafc);">
+            <h6 class="fw-bold mb-3 text-dark"><i class="bi bi-cpu-fill me-2 text-primary"></i>Hạ tầng Container (Docker)</h6>
+            <div class="small">
+                <div class="d-flex justify-content-between py-1 border-bottom">
+                    <span class="text-muted">Web Container:</span>
+                    <span class="fw-semibold text-success">Python 3.12 (Gunicorn)</span>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom">
+                    <span class="text-muted">Database:</span>
+                    <span class="fw-semibold text-primary">PostgreSQL 16 Alpine</span>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom">
+                    <span class="text-muted">Reverse Proxy:</span>
+                    <span class="fw-semibold text-dark">Nginx (SSL TLS 1.3)</span>
+                </div>
+                <div class="d-flex justify-content-between py-1">
+                    <span class="text-muted">Hardening User:</span>
+                    <span class="badge bg-success">appuser:1001 (Non-root)</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const ctx = document.getElementById('tableChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Bàn trống', 'Có khách', 'Đặt trước'],
+            datasets: [{
+                data: [{{ tables.avail }}, {{ tables.occ }}, {{ tables.res }}],
+                backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            cutout: '70%'
+        }
+    });
+</script>
 {% endblock %}

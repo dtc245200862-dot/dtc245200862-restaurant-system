@@ -3,49 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title or "Hệ thống Quản lý Nhà hàng / Order - Đề 12" }}</title>
+    <title>{{ title or "ICTU Restaurant POS - Đề 12" }}</title>
+    <!-- Bootstrap 5 & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        :root { --primary: #1e3c72; --secondary: #2a5298; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f8f9fa; min-height: 100vh; display: flex; flex-direction: column; }
-        .navbar-custom { background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .stat-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
-    </style>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS Hiện đại -->
+    <link rel="stylesheet" href="/static/css/modern.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-2">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/"><i class="bi bi-shop me-2"></i> ICTU Restaurant POS</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <!-- Navbar Header Cao Cấp -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top py-2">
+        <div class="container-fluid px-lg-4">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <div class="bg-primary bg-opacity-25 p-2 rounded-3 me-2 border border-primary border-opacity-50">
+                    <i class="bi bi-fire text-warning fs-5"></i>
+                </div>
+                <span>ICTU RESTAURANT <span class="badge bg-primary text-white fw-semibold ms-1" style="font-size: 0.65rem;">PRO 2.0</span></span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link text-white" href="/"><i class="bi bi-speedometer2 me-1"></i> Tổng quan</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/tables"><i class="bi bi-grid-3x3-gap me-1"></i> Bàn ăn</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/menu"><i class="bi bi-egg-fried me-1"></i> Thực đơn</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/orders"><i class="bi bi-receipt me-1"></i> Đơn hàng</a></li>
+            
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tables"><i class="bi bi-grid-3x3-gap-fill me-1"></i> Bàn ăn</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/menu"><i class="bi bi-cup-hot-fill me-1"></i> Thực đơn</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/orders"><i class="bi bi-receipt-cutoff me-1"></i> Đơn hàng</a>
+                    </li>
                 </ul>
-                <div class="d-flex align-items-center text-white">
-                    <span class="badge bg-warning text-dark me-2">Đề 12</span>
-                    <span class="small me-3">SV: <strong>Hồ Quang Huy</strong> (DTC245200862)</span>
-                    <a href="/metrics" target="_blank" class="btn btn-sm btn-outline-light me-2"><i class="bi bi-graph-up"></i> Metrics</a>
-                    <a href="/health" target="_blank" class="btn btn-sm btn-outline-info"><i class="bi bi-heart-pulse"></i> Health</a>
+
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Trạng thái kết nối CSDL và SSL -->
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 small d-none d-md-inline-flex align-items-center">
+                        <span class="status-dot dot-available me-1"></span> PostgreSQL 16
+                    </span>
+                    <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-2 py-1 small d-none d-md-inline-flex align-items-center">
+                        <i class="bi bi-shield-lock-fill me-1"></i> SSL HTTPS
+                    </span>
+
+                    <!-- Quick links -->
+                    <a href="/metrics" target="_blank" class="btn btn-sm btn-outline-light px-2" title="Prometheus Metrics">
+                        <i class="bi bi-speedometer2"></i>
+                    </a>
+                    <a href="/health" target="_blank" class="btn btn-sm btn-outline-light px-2" title="Health Check">
+                        <i class="bi bi-heart-pulse"></i>
+                    </a>
+                    
+                    <!-- Thông tin sinh viên -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center gap-2 px-3 py-1 rounded-pill" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle fs-6"></i>
+                            <span class="small fw-semibold">Hồ Quang Huy</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2">
+                            <li class="px-3 py-1">
+                                <p class="mb-0 fw-bold small">Hồ Quang Huy</p>
+                                <span class="text-muted small">MSV: DTC245200862</span><br>
+                                <span class="text-muted small">dtc245200862@ictu.edu.vn</span>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item small" href="/pgadmin/" target="_blank"><i class="bi bi-database me-2"></i> Mở pgAdmin 4</a></li>
+                            <li><a class="dropdown-item small" href="http://192.168.75.130:3000" target="_blank"><i class="bi bi-graph-up-arrow me-2"></i> Mở Grafana</a></li>
+                            <li><a class="dropdown-item small" href="http://192.168.75.130:9090" target="_blank"><i class="bi bi-activity me-2"></i> Mở Prometheus</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
-    <div class="container py-4 flex-grow-1">
+
+    <!-- Main Content -->
+    <main class="container-fluid px-lg-4 py-4 flex-grow-1">
         {% block content %}{% endblock %}
-    </div>
+    </main>
+
+    <!-- Modern Footer -->
     <footer class="bg-white border-top py-3 mt-auto">
-        <div class="container text-center small text-muted">
-            <p class="mb-1"><strong>Hệ thống Quản lý Nhà hàng / Order - Đề 12</strong> | Môn: Triển khai & Quản trị Hệ thống Phần mềm</p>
-            <p class="mb-0">Sinh viên: <strong>Hồ Quang Huy</strong> - MSV: <strong>DTC245200862</strong> - Email: <strong>dtc245200862@ictu.edu.vn</strong> | ICTU 2026</p>
+        <div class="container-fluid px-lg-4 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-muted">
+            <div>
+                <strong>Hệ thống Quản lý Nhà hàng / Order (Đề 12)</strong> • Học phần: Triển khai và Quản trị Hệ thống Phần mềm
+            </div>
+            <div>
+                Sinh viên: <strong>Hồ Quang Huy</strong> (DTC245200862) • Khoa CNTT - ICTU (2026)
+            </div>
         </div>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>
