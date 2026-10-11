@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0"><i class="bi bi-egg-fried me-2 text-warning"></i>Quản lý Thực đơn & Món ăn</h3>
+    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addMenuModal"><i class="bi bi-plus-circle me-1"></i> Thêm món mới</button>
+</div>
+
+<div class="card card-custom bg-white p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên món ăn</th>
+                    <th>Danh mục</th>
+                    <th>Đơn giá</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in menu_items %}
+                <tr>
+                    <td>#{{ m.id }}</td>
+                    <td><strong>{{ m.name }}</strong></td>
+                    <td><span class="badge bg-secondary">{{ m.category_name or 'Chưa phân loại' }}</span></td>
+                    <td class="fw-bold text-success">{{ "{:,.0f}".format(m.price) }} đ</td>
+                    <td>
+                        {% if m.is_available %}
+                            <span class="badge bg-success">Còn phục vụ</span>
+                        {% else %}
+                            <span class="badge bg-danger">Tạm hết</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="/menu/{{ m.id }}/toggle" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Đổi trạng thái</button>
+                        </form>
+                        <form action="/menu/{{ m.id }}/delete" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa món này?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Thêm Món -->
+<div class="modal fade" id="addMenuModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form action="/menu" method="POST" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Thêm món ăn mới vào thực đơn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Tên món ăn</label>
+                    <input type="text" name="name" class="form-control" placeholder="VD: Gà nướng mật ong" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Danh mục</label>
+                    <select name="category_id" class="form-select" required>
+                        {% for c in categories %}
+                        <option value="{{ c.id }}">{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Giá tiền (VNĐ)</label>
+                    <input type="number" name="price" class="form-control" placeholder="100000" min="0" step="1000" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="submit" class="btn btn-warning">Lưu món ăn</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

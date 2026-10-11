@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0"><i class="bi bi-receipt me-2 text-primary"></i>Quản lý Đơn hàng & Gọi món</h3>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOrderModal"><i class="bi bi-plus-circle me-1"></i> Tạo đơn gọi món mới</button>
+</div>
+
+<div class="card card-custom bg-white p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Vị trí bàn</th>
+                    <th>Khách hàng</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Thời gian</th>
+                    <th>Cập nhật trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in orders %}
+                <tr>
+                    <td><span class="badge bg-secondary">#{{ o.id }}</span></td>
+                    <td><strong>{{ o.table_number or 'Mang về' }}</strong></td>
+                    <td>{{ o.customer_name }}</td>
+                    <td class="fw-bold text-success">{{ "{:,.0f}".format(o.total_amount) }} đ</td>
+                    <td>
+                        {% if o.status == 'pending' %}<span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                        {% elif o.status == 'cooking' %}<span class="badge bg-info text-dark">Đang nấu</span>
+                        {% elif o.status == 'served' %}<span class="badge bg-primary">Đã lên món</span>
+                        {% elif o.status == 'completed' %}<span class="badge bg-success">Hoàn thành</span>
+                        {% else %}<span class="badge bg-danger">Đã hủy</span>{% endif %}
+                    </td>
+                    <td class="small text-muted">{{ o.created_at.strftime('%H:%M - %d/%m/%Y') }}</td>
+                    <td>
+                        <form action="/orders/{{ o.id }}/status" method="POST" class="d-flex gap-1">
+                            <select name="status" class="form-select form-select-sm" style="max-width: 140px;">
+                                <option value="pending" {% if o.status == 'pending' %}selected{% endif %}>Chờ xác nhận</option>
+                                <option value="cooking" {% if o.status == 'cooking' %}selected{% endif %}>Đang nấu</option>
+                                <option value="served" {% if o.status == 'served' %}selected{% endif %}>Đã lên món</option>
+                                <option value="completed" {% if o.status == 'completed' %}selected{% endif %}>Hoàn thành</option>
+                                <option value="cancelled" {% if o.status == 'cancelled' %}selected{% endif %}>Hủy đơn</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Lưu</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-center text-muted py-4">Chưa có đơn hàng nào</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Tạo Đơn -->
+<div class="modal fade" id="addOrderModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form action="/orders" method="POST" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Tạo đơn gọi món mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Chọn bàn ăn</label>
+                    <select name="table_id" class="form-select" required>
+                        {% for t in tables %}
+                        <option value="{{ t.id }}">{{ t.table_number }} ({{ t.capacity }} người)</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Tên khách hàng / Ghi chú</label>
+                    <input type="text" name="customer_name" class="form-control" value="Khách tại bàn">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Chọn món ăn</label>
+                    <select name="menu_item_id" class="form-select" required>
+                        {% for m in menu_items %}
+                        <option value="{{ m.id }}">{{ m.name }} - {{ "{:,.0f}".format(m.price) }} đ</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Số lượng</label>
+                    <input type="number" name="quantity" class="form-control" value="1" min="1" max="20" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="submit" class="btn btn-primary">Tạo đơn hàng</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
