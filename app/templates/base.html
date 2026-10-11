@@ -46,10 +46,10 @@
                 <div class="d-flex align-items-center gap-2">
                     <!-- Trạng thái kết nối CSDL và SSL -->
                     <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 small d-none d-md-inline-flex align-items-center">
-                        <span class="status-dot dot-available me-1"></span> PostgreSQL 16
+                        <span class="status-dot dot-available me-1"></span> PostgreSQL
                     </span>
                     <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-2 py-1 small d-none d-md-inline-flex align-items-center">
-                        <i class="bi bi-shield-lock-fill me-1"></i> SSL HTTPS
+                        <i class="bi bi-shield-lock-fill me-1"></i> HTTPS
                     </span>
 
                     <!-- Quick links -->
@@ -60,31 +60,58 @@
                         <i class="bi bi-heart-pulse"></i>
                     </a>
                     
-                    <!-- Thông tin sinh viên -->
+                    <!-- Thông tin Tài khoản Đang đăng nhập -->
+                    {% if session.get('user_id') %}
                     <div class="dropdown">
                         <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center gap-2 px-3 py-1 rounded-pill" type="button" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle fs-6"></i>
-                            <span class="small fw-semibold">Hồ Quang Huy</span>
+                            <span class="small fw-semibold">{{ session.get('full_name', 'Người dùng') }}</span>
+                            {% if session.get('role') == 'admin' %}
+                                <span class="badge bg-danger" style="font-size: 0.65rem;">Admin</span>
+                            {% elif session.get('role') == 'staff' %}
+                                <span class="badge bg-primary" style="font-size: 0.65rem;">Thu ngân</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark" style="font-size: 0.65rem;">Bếp</span>
+                            {% endif %}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2">
                             <li class="px-3 py-1">
-                                <p class="mb-0 fw-bold small">Hồ Quang Huy</p>
-                                <span class="text-muted small">MSV: DTC245200862</span><br>
-                                <span class="text-muted small">dtc245200862@ictu.edu.vn</span>
+                                <p class="mb-0 fw-bold small">{{ session.get('full_name') }}</p>
+                                <span class="text-muted small">Tài khoản: @{{ session.get('username') }}</span><br>
+                                <span class="text-muted small">Vai trò: {{ session.get('role')|upper }}</span>
                             </li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item small" href="/pgadmin/" target="_blank"><i class="bi bi-database me-2"></i> Mở pgAdmin 4</a></li>
-                            <li><a class="dropdown-item small" href="http://192.168.75.130:3000" target="_blank"><i class="bi bi-graph-up-arrow me-2"></i> Mở Grafana</a></li>
-                            <li><a class="dropdown-item small" href="http://192.168.75.130:9090" target="_blank"><i class="bi bi-activity me-2"></i> Mở Prometheus</a></li>
+                            <li><a class="dropdown-item small" href="/pgadmin/" target="_blank"><i class="bi bi-database me-2"></i> pgAdmin 4</a></li>
+                            <li><a class="dropdown-item small" href="http://192.168.75.130:3000" target="_blank"><i class="bi bi-graph-up-arrow me-2"></i> Grafana</a></li>
+                            <li><a class="dropdown-item small" href="http://192.168.75.130:9090" target="_blank"><i class="bi bi-activity me-2"></i> Prometheus</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item small text-danger" href="/logout"><i class="bi bi-box-arrow-right me-2"></i> Đăng xuất</a></li>
                         </ul>
                     </div>
+                    {% else %}
+                        <a href="/login" class="btn btn-sm btn-primary-custom rounded-pill px-3">Đăng nhập</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Thông báo Flash Messages -->
+    <div class="container-fluid px-lg-4 mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show py-2 small shadow-sm" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close py-2" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
     <!-- Main Content -->
-    <main class="container-fluid px-lg-4 py-4 flex-grow-1">
+    <main class="container-fluid px-lg-4 py-3 flex-grow-1">
         {% block content %}{% endblock %}
     </main>
 
