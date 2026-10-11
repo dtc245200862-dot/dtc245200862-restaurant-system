@@ -1,0 +1,29 @@
+{% extends "staff/base_staff.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-grid-3x3-gap me-2 text-primary"></i>Sơ đồ Bàn ăn Căng tin</h3>
+</div>
+
+<div class="row g-3">
+    {% for t in tables %}
+    <div class="col-md-3">
+        <div class="card card-modern p-3 bg-white text-center">
+            <h4 class="fw-bold mb-1">{{ t.table_number }}</h4>
+            <p class="text-muted small mb-2">{{ t.capacity }} chỗ ngồi</p>
+            <div class="mb-3">
+                {% if t.status == 'available' %}<span class="badge bg-success px-3 py-2">Trống</span>
+                {% elif t.status == 'occupied' %}<span class="badge bg-danger px-3 py-2">Có khách</span>
+                {% else %}<span class="badge bg-warning text-dark px-3 py-2">Đặt trước</span>{% endif %}
+            </div>
+            <form action="/staff/tables/{{ t.id }}/status" method="POST" class="d-flex gap-1 justify-content-center">
+                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="available" {% if t.status == 'available' %}selected{% endif %}>Bàn trống</option>
+                    <option value="occupied" {% if t.status == 'occupied' %}selected{% endif %}>Có khách</option>
+                    <option value="reserved" {% if t.status == 'reserved' %}selected{% endif %}>Đặt trước</option>
+                </select>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

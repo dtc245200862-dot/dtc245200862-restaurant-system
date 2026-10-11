@@ -1,0 +1,111 @@
+{% extends "customer/base_customer.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1 text-dark"><i class="bi bi-clock-history me-2 text-success"></i>Lịch sử Đơn hàng của tôi</h3>
+        <p class="text-muted small mb-0">Theo dõi tiến độ chế biến và gửi đánh giá món ăn</p>
+    </div>
+    <a href="/customer/menu" class="btn btn-outline-success rounded-pill px-4"><i class="bi bi-plus-circle me-1"></i> Đặt thêm món</a>
+</div>
+
+<div class="card card-modern p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Món đã đặt</th>
+                    <th>Hình thức</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Thời gian</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in orders %}
+                <tr>
+                    <td><span class="badge bg-light text-dark border">#{{ o.id }}</span></td>
+                    <td class="fw-semibold">{{ o.items_summary or 'Chi tiết đơn' }}</td>
+                    <td>
+                        <span class="badge bg-secondary">
+                            {% if o.order_type == 'dine_in' %}{{ o.table_number }}{% else %}Mang về{% endif %}
+                        </span>
+                    </td>
+                    <td class="fw-bold text-success">{{ "{:,.0f}".format(o.total_amount) }} đ</td>
+                    <td>
+                        {% if o.status == 'pending' %}
+                            <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>Chờ duyệt</span>
+                        {% elif o.status == 'cooking' %}
+                            <span class="badge bg-info text-dark"><i class="bi bi-fire me-1"></i>Đang chế biến</span>
+                        {% elif o.status == 'served' %}
+                            <span class="badge bg-primary"><i class="bi bi-bell-fill me-1"></i>Đã xong (Mời nhận)</span>
+                        {% elif o.status == 'completed' %}
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Hoàn tất</span>
+                        {% else %}
+                            <span class="badge bg-danger">Đã hủy</span>
+                        {% endif %}
+                    </td>
+                    <td class="small text-muted">{{ o.created_at.strftime('%H:%M - %d/%m') }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-warning rounded-pill px-3" onclick="openReviewModal('{{ o.items_summary }}')">
+                            <i class="bi bi-star-fill text-warning me-1"></i> Đánh giá
+                        </button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">Bạn chưa có đơn đặt món nào gần đây.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Đánh giá món -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form action="/customer/review" method="POST" class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark"><i class="bi bi-star-fill text-warning me-2"></i>Đánh giá món ăn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-3">
+                <input type="hidden" name="menu_item_name" id="rev_item_name">
+                <p class="small text-muted mb-3" id="rev_display_name"></p>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-muted">Mức độ hài lòng (1 - 5 sao)</label>
+                    <select name="rating" class="form-select">
+                        <option value="5">⭐⭐⭐⭐⭐ Rất ngon, phục vụ tuyệt vời</option>
+                        <option value="4">⭐⭐⭐⭐ Ngon, vừa miệng</option>
+                        <option value="3">⭐⭐⭐ Bình thường</option>
+                        <option value="2">⭐⭐ Chưa hợp khẩu vị</option>
+                        <option value="1">⭐ Cần cải thiện chất lượng</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-muted">Nhận xét chi tiết</label>
+                    <textarea name="comment" class="form-control" rows="3" placeholder="Chia sẻ cảm nhận của bạn để căng tin nâng cao chất lượng nhé..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
+                <button type="submit" class="btn btn-warning rounded-pill px-4 fw-bold">Gửi đánh giá</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function openReviewModal(itemSummary) {
+        document.getElementById('rev_item_name').value = itemSummary || 'Món ăn';
+        document.getElementById('rev_display_name').innerText = 'Đánh giá cho: ' + (itemSummary || 'Món ăn');
+        new bootstrap.Modal(document.getElementById('reviewModal')).show();
+    }
+</script>
+{% endblock %}

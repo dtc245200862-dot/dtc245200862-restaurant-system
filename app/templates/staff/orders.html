@@ -1,0 +1,67 @@
+{% extends "staff/base_staff.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-receipt me-2 text-primary"></i>Quản lý Đơn hàng Sinh viên đặt</h3>
+    <span class="badge bg-primary fs-6 px-3 py-2">Tổng đơn: {{ orders|length }}</span>
+</div>
+
+<div class="card card-modern p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Người đặt</th>
+                    <th>Món đã gọi</th>
+                    <th>Hình thức / Vị trí</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái hiện tại</th>
+                    <th>Thao tác duyệt nhanh</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in orders %}
+                <tr>
+                    <td><span class="badge bg-light text-dark border">#{{ o.id }}</span></td>
+                    <td><strong>{{ o.customer_name }}</strong></td>
+                    <td>{{ o.items or 'Chưa rõ' }}</td>
+                    <td>
+                        <span class="badge bg-secondary">
+                            {% if o.order_type == 'dine_in' %}{{ o.table_number }}{% else %}Mang về{% endif %}
+                        </span>
+                    </td>
+                    <td class="fw-bold text-success">{{ "{:,.0f}".format(o.total_amount) }} đ</td>
+                    <td>
+                        {% if o.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                        {% elif o.status == 'cooking' %}
+                            <span class="badge bg-info text-dark">Đang nấu</span>
+                        {% elif o.status == 'served' %}
+                            <span class="badge bg-primary">Đã xong</span>
+                        {% elif o.status == 'completed' %}
+                            <span class="badge bg-success">Hoàn thành</span>
+                        {% else %}
+                            <span class="badge bg-danger">Đã hủy</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="/staff/orders/{{ o.id }}/status" method="POST" class="d-flex gap-1">
+                            <select name="status" class="form-select form-select-sm" style="max-width: 140px;">
+                                <option value="pending" {% if o.status == 'pending' %}selected{% endif %}>Chờ duyệt</option>
+                                <option value="cooking" {% if o.status == 'cooking' %}selected{% endif %}>Đang nấu</option>
+                                <option value="served" {% if o.status == 'served' %}selected{% endif %}>Đã xong</option>
+                                <option value="completed" {% if o.status == 'completed' %}selected{% endif %}>Thu tiền</option>
+                                <option value="cancelled" {% if o.status == 'cancelled' %}selected{% endif %}>Hủy</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary">Lưu</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-center py-4 text-muted">Chưa có đơn hàng nào</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

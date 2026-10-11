@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title or "Khu vực Nhân viên - Căng Tin AI" }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/static/css/modern.css">
+</head>
+<body style="background-color: #f8fafc;">
+    <!-- Navbar Nhân viên -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow-sm py-2">
+        <div class="container-fluid px-lg-4">
+            <a class="navbar-brand fw-bold d-flex align-items-center text-white" href="/staff/dashboard">
+                <i class="bi bi-person-badge-fill me-2 fs-4"></i> CĂNG TIN STAFF
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navStaff">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navStaff">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1 ms-lg-3">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/staff/dashboard"><i class="bi bi-speedometer2 me-1"></i> Tổng quan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/staff/orders"><i class="bi bi-receipt me-1"></i> Đơn hàng</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/staff/menu"><i class="bi bi-egg-fried me-1"></i> Món ăn & Tồn kho</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/staff/tables"><i class="bi bi-grid-3x3-gap me-1"></i> Sơ đồ bàn</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/staff/reviews"><i class="bi bi-star-half me-1"></i> Đánh giá khách</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="badge bg-light text-primary px-3 py-2 rounded-pill fw-bold">Nhân viên: {{ session.get('full_name') }}</span>
+                    <a href="/logout" class="btn btn-sm btn-outline-light rounded-pill px-3"><i class="bi bi-box-arrow-right me-1"></i> Đăng xuất</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-lg-4 py-2">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show py-2 small shadow-sm" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close py-2" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <main class="container-fluid px-lg-4 pb-5">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-white border-top py-3 mt-auto text-center small text-muted">
+        Phân hệ Nhân viên Căng tin • Đề 12 • Sinh viên: <strong>Hồ Quang Huy</strong> (DTC245200862)
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

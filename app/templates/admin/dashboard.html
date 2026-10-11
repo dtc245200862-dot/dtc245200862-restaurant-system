@@ -1,0 +1,84 @@
+{% extends "admin/base_admin.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1 text-white">Thống kê tài chính & Tổng quan</h3>
+        <p class="text-secondary small mb-0">Theo dõi doanh thu, chi phí nhập nguyên liệu và lợi nhuận ròng</p>
+    </div>
+</div>
+
+<!-- 4 Thẻ Tài Chính (Theo đúng mẫu Hình 22 của User) -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card-dark p-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-warning bg-opacity-25 text-warning p-3 rounded-circle fs-4">💰</div>
+                <div>
+                    <div class="text-secondary small">DOANH THU</div>
+                    <h4 class="fw-bold mb-0 text-white">{{ "{:,.0f}".format(revenue) }} đ</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-dark p-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-primary bg-opacity-25 text-primary p-3 rounded-circle fs-4">📦</div>
+                <div>
+                    <div class="text-secondary small">ĐƠN HÀNG</div>
+                    <h4 class="fw-bold mb-0 text-white">{{ total_orders }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-dark p-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-danger bg-opacity-25 text-danger p-3 rounded-circle fs-4">📉</div>
+                <div>
+                    <div class="text-secondary small">CHI PHÍ (VỐN)</div>
+                    <h4 class="fw-bold mb-0 text-danger">{{ "{:,.0f}".format(cost) }} đ</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-dark p-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-success bg-opacity-25 text-success p-3 rounded-circle fs-4">📈</div>
+                <div>
+                    <div class="text-secondary small">LỢI NHUẬN RÒNG</div>
+                    <h4 class="fw-bold mb-0 {% if profit >= 0 %}text-success{% else %}text-danger{% endif %}">{{ "{:,.0f}".format(profit) }} đ</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Khung tình hình tài chính tổng quan -->
+<div class="card-dark p-4 mb-4">
+    <h5 class="fw-bold text-white mb-2">Tình hình tài chính tổng quan</h5>
+    <p class="text-secondary small mb-4">Số liệu được tính toán dựa trên tổng đơn hàng thành công và giá hóa đơn nhập nguyên vật liệu.</p>
+    
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="p-3 rounded-3" style="background-color: #252525;">
+                <span class="text-secondary small">Doanh thu bán ra</span>
+                <h4 class="fw-bold text-info mb-0">{{ "{:,.0f}".format(revenue) }} đ</h4>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3 rounded-3" style="background-color: #252525;">
+                <span class="text-secondary small">Chi phí nhập hàng</span>
+                <h4 class="fw-bold text-danger mb-0">-{{ "{:,.0f}".format(cost) }} đ</h4>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3 rounded-3" style="background-color: #252525;">
+                <span class="text-secondary small">Lợi nhuận ròng</span>
+                <h4 class="fw-bold text-success mb-0">{{ "{:,.0f}".format(profit) }} đ</h4>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

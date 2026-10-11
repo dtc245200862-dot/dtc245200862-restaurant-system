@@ -9,7 +9,7 @@ from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_
 from pythonjsonlogger import jsonlogger
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'ictu-restaurant-secure-key-2026-dtc245200862')
+app.secret_key = os.getenv('SECRET_KEY', 'canteen-secure-secret-2026-dtc245200862')
 
 # Structured JSON Logging
 log_handler = logging.StreamHandler()
@@ -18,25 +18,25 @@ formatter = jsonlogger.JsonFormatter(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 log_handler.setFormatter(formatter)
-logger = logging.getLogger("restaurant-app")
+logger = logging.getLogger("canteen-app")
 logger.setLevel(logging.INFO)
 logger.addHandler(log_handler)
 logger.propagate = False
 
 # Prometheus Metrics
 HTTP_REQUESTS_TOTAL = Counter(
-    'restaurant_http_requests_total',
+    'canteen_http_requests_total',
     'Tổng số lượt request HTTP',
     ['method', 'endpoint', 'status_code']
 )
 HTTP_REQUEST_DURATION = Histogram(
-    'restaurant_http_request_duration_seconds',
+    'canteen_http_request_duration_seconds',
     'Thời gian xử lý HTTP request',
     ['method', 'endpoint', 'status_code'],
     buckets=[0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5]
 )
 
-def get_db_connection():
+def get_db():
     return psycopg2.connect(
         host=os.getenv('DB_HOST', 'db'),
         port=int(os.getenv('DB_PORT', '5432')),
@@ -48,24 +48,29 @@ def get_db_connection():
 
 def login_required(f):
     @wraps(f)
-    def decorated_function(*args, **kwargs):
+    def decorated(*args, **kwargs):
         if 'user_id' not in session:
             return redirect(url_for('login'))
         return f(*args, **kwargs)
-    return decorated_function
+    return decorated
 
 def role_required(*allowed_roles):
     def decorator(f):
         @wraps(f)
-        def decorated_function(*args, **kwargs):
+        def decorated(*args, **kwargs):
             if 'user_id' not in session:
                 return redirect(url_for('login'))
-            user_role = session.get('role', '')
-            if user_role not in allowed_roles and 'admin' not in allowed_roles:
-                flash('Bạn không có quyền truy cập chức năng này!', 'danger')
-                return redirect(url_for('index'))
+            if session.get('role') not in allowed_roles:
+                flash('Bạn không có quyền truy cập khu vực này!', 'danger')
+                role = session.get('role')
+                if role == 'admin':
+                    return redirect(url_for('admin_dashboard'))
+                elif role == 'staff':
+                    return redirect(url_for('staff_dashboard'))
+                else:
+                    return redirect(url_for('customer_menu'))
             return f(*args, **kwargs)
-        return decorated_function
+        return decorated
     return decorator
 
 @app.before_request
@@ -86,7 +91,6 @@ def after_request(response):
             'path': request.path,
             'status': response.status_code,
             'duration_ms': round(duration * 1000, 2),
-            'remote_ip': request.headers.get('X-Forwarded-For', request.remote_addr),
             'user': session.get('username', 'anonymous'),
             'student_id': 'DTC245200862'
         })
@@ -99,7 +103,7 @@ def metrics():
 @app.route('/health')
 def health():
     try:
-        conn = get_db_connection()
+        conn = get_db()
         cur = conn.cursor()
         cur.execute("SELECT 1;")
         cur.close()
@@ -108,20 +112,31 @@ def health():
             'status': 'healthy',
             'database': 'connected',
             'student': 'Ho Quang Huy - DTC245200862',
-            'topic': 'De 12 - Quan ly Nha hang / Order'
+            'system': 'He thong Quan ly Nha hang / Căng tin'
         }), 200
     except Exception as e:
         logger.error("Health check failed", extra={'error': str(e)})
         return jsonify({'status': 'unhealthy', 'error': str(e)}), 500
 
-# ================= AUTHENTICATION ROUTES =================
+# ================= AUTHENTICATION & REDIRECT =================
+@app.route('/')
+def home():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    role = session.get('role')
+    if role == 'admin':
+        return redirect(url_for('admin_dashboard'))
+    elif role == 'staff':
+        return redirect(url_for('staff_dashboard'))
+    else:
+        return redirect(url_for('customer_menu'))
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        
-        conn = get_db_connection()
+        conn = get_db()
         cur = conn.cursor()
         cur.execute("SELECT * FROM users WHERE username = %s AND password = %s;", (username, password))
         user = cur.fetchone()
@@ -134,7 +149,14 @@ def login():
             session['full_name'] = user['full_name']
             session['role'] = user['role']
             logger.info("Đăng nhập thành công", extra={'user': username, 'role': user['role']})
-            return redirect(url_for('index'))
+            
+            # Điều hướng vào đúng giao diện riêng của từng vai trò
+            if user['role'] == 'admin':
+                return redirect(url_for('admin_dashboard'))
+            elif user['role'] == 'staff':
+                return redirect(url_for('staff_dashboard'))
+            else:
+                return redirect(url_for('customer_menu'))
         else:
             flash('Tên đăng nhập hoặc mật khẩu không chính xác!', 'danger')
             
@@ -142,187 +164,412 @@ def login():
 
 @app.route('/logout')
 def logout():
-    user = session.get('username', '')
     session.clear()
-    logger.info("Đăng xuất thành công", extra={'user': user})
     return redirect(url_for('login'))
 
-# ================= NGHIỆP VỤ NHÀ HÀNG =================
-@app.route('/')
+# ================= 1. GIAO DIỆN KHÁCH HÀNG / SINH VIÊN (/customer) =================
+@app.route('/customer/menu')
 @login_required
-def index():
-    conn = get_db_connection()
+@role_required('customer', 'admin')
+def customer_menu():
+    conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) as total, COUNT(*) FILTER (WHERE status='available') as avail, COUNT(*) FILTER (WHERE status='occupied') as occ, COUNT(*) FILTER (WHERE status='reserved') as res FROM tables;")
-    table_stats = cur.fetchone()
+    cur.execute("SELECT * FROM categories ORDER BY id ASC;")
+    categories = cur.fetchall()
     
-    cur.execute("SELECT COUNT(*) as total_orders, COUNT(*) FILTER (WHERE status='pending') as pending, COUNT(*) FILTER (WHERE status='cooking') as cooking, COALESCE(SUM(total_amount), 0) as revenue FROM orders;")
-    order_stats = cur.fetchone()
+    cat_id = request.args.get('category')
+    if cat_id:
+        cur.execute("SELECT m.*, c.name as category_name FROM menu_items m LEFT JOIN categories c ON m.category_id = c.id WHERE m.category_id = %s ORDER BY m.id ASC;", (cat_id,))
+    else:
+        cur.execute("SELECT m.*, c.name as category_name FROM menu_items m LEFT JOIN categories c ON m.category_id = c.id ORDER BY m.id ASC;")
+    menu_items = cur.fetchall()
     
-    cur.execute("SELECT COUNT(*) as total_menu FROM menu_items WHERE is_available = true;")
-    menu_stats = cur.fetchone()
+    cur.execute("SELECT * FROM tables WHERE status = 'available' ORDER BY table_number ASC;")
+    tables = cur.fetchall()
     
-    cur.execute("SELECT o.*, t.table_number FROM orders o LEFT JOIN tables t ON o.table_id = t.id ORDER BY o.created_at DESC LIMIT 6;")
+    cur.close()
+    conn.close()
+    return render_template('customer/menu.html', categories=categories, menu_items=menu_items, tables=tables, active_cat=cat_id)
+
+@app.route('/customer/order', methods=['POST'])
+@login_required
+@role_required('customer', 'admin')
+def customer_order():
+    menu_item_id = request.form.get('menu_item_id')
+    quantity = int(request.form.get('quantity', 1))
+    order_type = request.form.get('order_type', 'dine_in')
+    table_number = request.form.get('table_number', 'Mang về')
+    note = request.form.get('note', '')
+    
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM menu_items WHERE id = %s;", (menu_item_id,))
+    item = cur.fetchone()
+    
+    if not item or not item['is_available'] or item['stock_quantity'] < quantity:
+        flash('Món ăn đã hết suất hoặc không đủ số lượng tồn kho!', 'danger')
+        cur.close()
+        conn.close()
+        return redirect(url_for('customer_menu'))
+        
+    price = float(item['price'])
+    total = price * quantity
+    user_id = session.get('user_id')
+    customer_name = session.get('full_name')
+    
+    # Tạo đơn
+    cur.execute(
+        "INSERT INTO orders (user_id, customer_name, order_type, table_number, status, total_amount, note) VALUES (%s, %s, %s, %s, 'pending', %s, %s) RETURNING id;",
+        (user_id, customer_name, order_type, table_number, total, note)
+    )
+    order_id = cur.fetchone()['id']
+    
+    cur.execute(
+        "INSERT INTO order_items (order_id, menu_item_id, quantity, unit_price, subtotal) VALUES (%s, %s, %s, %s, %s);",
+        (order_id, menu_item_id, quantity, price, total)
+    )
+    
+    # Giảm tồn kho
+    cur.execute("UPDATE menu_items SET stock_quantity = stock_quantity - %s WHERE id = %s;", (quantity, menu_item_id))
+    
+    # Nếu ăn tại bàn thì cập nhật trạng thái bàn
+    if order_type == 'dine_in':
+        cur.execute("UPDATE tables SET status = 'occupied' WHERE table_number = %s;", (table_number,))
+        
+    conn.commit()
+    logger.info("Sinh viên đặt món thành công", extra={'order_id': order_id, 'user': session.get('username')})
+    cur.close()
+    conn.close()
+    flash('Đặt món thành công! Bạn có thể theo dõi tiến độ ở mục Đơn hàng của tôi.', 'success')
+    return redirect(url_for('customer_orders'))
+
+@app.route('/customer/orders')
+@login_required
+@role_required('customer', 'admin')
+def customer_orders():
+    conn = get_db()
+    cur = conn.cursor()
+    user_id = session.get('user_id')
+    cur.execute("""
+        SELECT o.*, 
+               STRING_AGG(CONCAT(m.name, ' (x', oi.quantity, ')'), ', ') as items_summary
+        FROM orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        LEFT JOIN menu_items m ON oi.menu_item_id = m.id
+        WHERE o.user_id = %s
+        GROUP BY o.id
+        ORDER BY o.created_at DESC;
+    """, (user_id,))
+    my_orders = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('customer/orders.html', orders=my_orders)
+
+@app.route('/customer/review', methods=['POST'])
+@login_required
+@role_required('customer', 'admin')
+def customer_review():
+    menu_item_name = request.form.get('menu_item_name')
+    rating = int(request.form.get('rating', 5))
+    comment = request.form.get('comment', '')
+    user_id = session.get('user_id')
+    customer_name = session.get('full_name')
+    
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO reviews (user_id, customer_name, menu_item_name, rating, comment) VALUES (%s, %s, %s, %s, %s);",
+        (user_id, customer_name, menu_item_name, rating, comment)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash('Cảm ơn bạn đã gửi đánh giá món ăn!', 'success')
+    return redirect(url_for('customer_orders'))
+
+# ================= 2. GIAO DIỆN NHÂN VIÊN CĂNG TIN (/staff) =================
+@app.route('/staff/dashboard')
+@login_required
+@role_required('staff', 'admin')
+def staff_dashboard():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) as total FROM menu_items WHERE is_available = true;")
+    total_menu = cur.fetchone()['total']
+    
+    cur.execute("SELECT COUNT(*) as pending_count FROM orders WHERE status = 'pending';")
+    pending_count = cur.fetchone()['pending_count']
+    
+    cur.execute("SELECT COALESCE(SUM(total_amount), 0) as revenue FROM orders WHERE status = 'completed';")
+    revenue = cur.fetchone()['revenue']
+    
+    cur.execute("SELECT * FROM menu_items WHERE stock_quantity <= 10 ORDER BY stock_quantity ASC;")
+    low_stock = cur.fetchall()
+    
+    cur.execute("SELECT o.*, STRING_AGG(CONCAT(m.name, ' (x', oi.quantity, ')'), ', ') as items FROM orders o LEFT JOIN order_items oi ON o.id = oi.order_id LEFT JOIN menu_items m ON oi.menu_item_id = m.id GROUP BY o.id ORDER BY o.created_at DESC LIMIT 5;")
     recent_orders = cur.fetchall()
     
     cur.close()
     conn.close()
-    return render_template('index.html', tables=table_stats, orders=order_stats, menu_count=menu_stats['total_menu'], recent_orders=recent_orders)
+    return render_template('staff/dashboard.html', total_menu=total_menu, pending_count=pending_count, revenue=revenue, low_stock=low_stock, recent_orders=recent_orders)
 
-@app.route('/tables', methods=['GET', 'POST'])
+@app.route('/staff/orders')
 @login_required
-def tables():
-    conn = get_db_connection()
+@role_required('staff', 'admin')
+def staff_orders():
+    conn = get_db()
     cur = conn.cursor()
-    if request.method == 'POST':
-        if session.get('role') not in ['admin', 'staff']:
-            flash('Chỉ Quản trị viên và Nhân viên mới có quyền thêm bàn!', 'danger')
-            return redirect(url_for('tables'))
-        table_number = request.form.get('table_number')
-        capacity = request.form.get('capacity', 4)
-        cur.execute("INSERT INTO tables (table_number, capacity, status) VALUES (%s, %s, 'available');", (table_number, capacity))
-        conn.commit()
-        logger.info("Thêm bàn ăn mới", extra={'table_number': table_number, 'by': session.get('username')})
-        cur.close()
-        conn.close()
-        return redirect(url_for('tables'))
-        
-    cur.execute("SELECT * FROM tables ORDER BY table_number ASC;")
-    all_tables = cur.fetchall()
+    cur.execute("""
+        SELECT o.*, 
+               STRING_AGG(CONCAT(m.name, ' (x', oi.quantity, ')'), ', ') as items
+        FROM orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        LEFT JOIN menu_items m ON oi.menu_item_id = m.id
+        GROUP BY o.id
+        ORDER BY o.created_at DESC;
+    """)
+    all_orders = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('tables.html', tables=all_tables)
+    return render_template('staff/orders.html', orders=all_orders)
 
-@app.route('/tables/<int:table_id>/status', methods=['POST'])
+@app.route('/staff/orders/<int:order_id>/status', methods=['POST'])
 @login_required
-def update_table_status(table_id):
+@role_required('staff', 'admin')
+def staff_order_status(order_id):
     status = request.form.get('status')
-    conn = get_db_connection()
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE orders SET status = %s, updated_at = NOW() WHERE id = %s;", (status, order_id))
+    
+    if status in ['completed', 'cancelled']:
+        cur.execute("SELECT table_number FROM orders WHERE id = %s;", (order_id,))
+        res = cur.fetchone()
+        if res and res['table_number'] and res['table_number'] != 'Mang về':
+            t_num = res['table_number']
+            cur.execute("SELECT COUNT(*) as cnt FROM orders WHERE table_number = %s AND status IN ('pending', 'cooking', 'served');", (t_num,))
+            if cur.fetchone()['cnt'] == 0:
+                cur.execute("UPDATE tables SET status = 'available' WHERE table_number = %s;", (t_num,))
+                
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash(f'Đã cập nhật trạng thái đơn #{order_id} thành {status}!', 'success')
+    return redirect(url_for('staff_orders'))
+
+@app.route('/staff/menu')
+@login_required
+@role_required('staff', 'admin')
+def staff_menu():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT m.*, c.name as category_name FROM menu_items m LEFT JOIN categories c ON m.category_id = c.id ORDER BY m.id ASC;")
+    items = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('staff/menu.html', menu_items=items)
+
+@app.route('/staff/menu/<int:item_id>/stock', methods=['POST'])
+@login_required
+@role_required('staff', 'admin')
+def staff_menu_stock(item_id):
+    stock = int(request.form.get('stock', 0))
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE menu_items SET stock_quantity = %s, is_available = (%s > 0) WHERE id = %s;", (stock, stock, item_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+    flash('Cập nhật số lượng tồn kho thành công!', 'success')
+    return redirect(url_for('staff_menu'))
+
+@app.route('/staff/menu/<int:item_id>/toggle', methods=['POST'])
+@login_required
+@role_required('staff', 'admin')
+def staff_menu_toggle(item_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE menu_items SET is_available = NOT is_available WHERE id = %s;", (item_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return redirect(url_for('staff_menu'))
+
+@app.route('/staff/tables')
+@login_required
+@role_required('staff', 'admin')
+def staff_tables():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM tables ORDER BY table_number ASC;")
+    tables = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('staff/tables.html', tables=tables)
+
+@app.route('/staff/tables/<int:table_id>/status', methods=['POST'])
+@login_required
+@role_required('staff', 'admin')
+def staff_table_status(table_id):
+    status = request.form.get('status')
+    conn = get_db()
     cur = conn.cursor()
     cur.execute("UPDATE tables SET status = %s WHERE id = %s;", (status, table_id))
     conn.commit()
-    logger.info("Cập nhật trạng thái bàn", extra={'table_id': table_id, 'status': status, 'by': session.get('username')})
     cur.close()
     conn.close()
-    return redirect(url_for('tables'))
+    return redirect(url_for('staff_tables'))
 
-@app.route('/menu', methods=['GET', 'POST'])
+@app.route('/staff/reviews')
 @login_required
-def menu():
-    conn = get_db_connection()
+@role_required('staff', 'admin')
+def staff_reviews():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM reviews ORDER BY created_at DESC;")
+    reviews = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('staff/reviews.html', reviews=reviews)
+
+# ================= 3. GIAO DIỆN QUẢN TRỊ VIÊN ADMIN (/admin) =================
+@app.route('/admin/dashboard')
+@login_required
+@role_required('admin')
+def admin_dashboard():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT COALESCE(SUM(total_amount), 0) as revenue FROM orders WHERE status = 'completed';")
+    revenue = float(cur.fetchone()['revenue'])
+    
+    cur.execute("SELECT COUNT(*) as total_orders FROM orders;")
+    total_orders = cur.fetchone()['total_orders']
+    
+    cur.execute("SELECT COALESCE(SUM(total_cost), 0) as cost FROM inventory_invoices;")
+    cost = float(cur.fetchone()['cost'])
+    
+    profit = revenue - cost
+    
+    cur.execute("SELECT * FROM inventory_invoices ORDER BY created_at DESC LIMIT 5;")
+    recent_invoices = cur.fetchall()
+    
+    cur.execute("SELECT o.* FROM orders o ORDER BY o.created_at DESC LIMIT 5;")
+    recent_orders = cur.fetchall()
+    
+    cur.close()
+    conn.close()
+    return render_template('admin/dashboard.html', revenue=revenue, total_orders=total_orders, cost=cost, profit=profit, invoices=recent_invoices, orders=recent_orders)
+
+@app.route('/admin/reports')
+@login_required
+@role_required('admin')
+def admin_reports():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT DATE(created_at) as order_date, COUNT(*) as count, SUM(total_amount) as daily_revenue
+        FROM orders
+        WHERE status = 'completed'
+        GROUP BY DATE(created_at)
+        ORDER BY order_date DESC;
+    """)
+    daily_reports = cur.fetchall()
+    
+    cur.execute("SELECT * FROM orders WHERE status = 'completed' ORDER BY created_at DESC;")
+    completed_orders = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('admin/reports.html', daily_reports=daily_reports, completed_orders=completed_orders)
+
+@app.route('/admin/inventory', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def admin_inventory():
+    conn = get_db()
     cur = conn.cursor()
     if request.method == 'POST':
-        if session.get('role') != 'admin':
-            flash('Chỉ Quản trị viên mới có quyền thay đổi thực đơn!', 'danger')
-            return redirect(url_for('menu'))
+        name = request.form.get('invoice_name')
+        purchase_cost = float(request.form.get('purchase_cost', 0))
+        shipping_fee = float(request.form.get('shipping_fee', 0))
+        total_cost = purchase_cost + shipping_fee
+        cur.execute(
+            "INSERT INTO inventory_invoices (invoice_name, purchase_cost, shipping_fee, total_cost) VALUES (%s, %s, %s, %s);",
+            (name, purchase_cost, shipping_fee, total_cost)
+        )
+        conn.commit()
+        flash('Đã thêm hóa đơn nhập hàng mới!', 'success')
+        cur.close()
+        conn.close()
+        return redirect(url_for('admin_inventory'))
+        
+    cur.execute("SELECT * FROM inventory_invoices ORDER BY created_at DESC;")
+    invoices = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('admin/inventory.html', invoices=invoices)
+
+@app.route('/admin/accounts', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def admin_accounts():
+    conn = get_db()
+    cur = conn.cursor()
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        full_name = request.form.get('full_name')
+        role = request.form.get('role')
+        cur.execute("INSERT INTO users (username, password, full_name, role) VALUES (%s, %s, %s, %s);", (username, password, full_name, role))
+        conn.commit()
+        flash('Tạo tài khoản mới thành công!', 'success')
+        cur.close()
+        conn.close()
+        return redirect(url_for('admin_accounts'))
+        
+    cur.execute("SELECT * FROM users ORDER BY id ASC;")
+    users = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('admin/accounts.html', users=users)
+
+@app.route('/admin/menu', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def admin_menu():
+    conn = get_db()
+    cur = conn.cursor()
+    if request.method == 'POST':
         name = request.form.get('name')
         category_id = request.form.get('category_id')
         price = request.form.get('price')
-        cur.execute("INSERT INTO menu_items (name, category_id, price, is_available) VALUES (%s, %s, %s, true);", (name, category_id, price))
+        stock = request.form.get('stock', 25)
+        cur.execute("INSERT INTO menu_items (name, category_id, price, stock_quantity, is_available) VALUES (%s, %s, %s, %s, true);", (name, category_id, price, stock))
         conn.commit()
-        logger.info("Thêm món ăn mới", extra={'name': name, 'price': price, 'by': session.get('username')})
+        flash('Thêm món ăn thành công!', 'success')
         cur.close()
         conn.close()
-        return redirect(url_for('menu'))
-
+        return redirect(url_for('admin_menu'))
+        
     cur.execute("SELECT * FROM categories ORDER BY id ASC;")
     categories = cur.fetchall()
     cur.execute("SELECT m.*, c.name as category_name FROM menu_items m LEFT JOIN categories c ON m.category_id = c.id ORDER BY m.id ASC;")
     items = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('menu.html', categories=categories, menu_items=items)
+    return render_template('admin/menu.html', categories=categories, menu_items=items)
 
-@app.route('/menu/<int:item_id>/toggle', methods=['POST'])
+@app.route('/admin/menu/<int:item_id>/delete', methods=['POST'])
 @login_required
-def toggle_menu(item_id):
-    if session.get('role') not in ['admin', 'kitchen']:
-        flash('Chỉ Quản trị viên hoặc Bếp mới được đổi trạng thái món!', 'danger')
-        return redirect(url_for('menu'))
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("UPDATE menu_items SET is_available = NOT is_available WHERE id = %s;", (item_id,))
-    conn.commit()
-    cur.close()
-    conn.close()
-    return redirect(url_for('menu'))
-
-@app.route('/menu/<int:item_id>/delete', methods=['POST'])
-@login_required
-def delete_menu(item_id):
-    if session.get('role') != 'admin':
-        flash('Chỉ Quản trị viên mới được xóa món ăn!', 'danger')
-        return redirect(url_for('menu'))
-    conn = get_db_connection()
+@role_required('admin')
+def admin_menu_delete(item_id):
+    conn = get_db()
     cur = conn.cursor()
     cur.execute("DELETE FROM menu_items WHERE id = %s;", (item_id,))
     conn.commit()
     cur.close()
     conn.close()
-    return redirect(url_for('menu'))
-
-@app.route('/orders', methods=['GET', 'POST'])
-@login_required
-def orders():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    if request.method == 'POST':
-        table_id = request.form.get('table_id')
-        customer_name = request.form.get('customer_name', 'Khách tại bàn')
-        menu_item_id = request.form.get('menu_item_id')
-        quantity = int(request.form.get('quantity', 1))
-        
-        cur.execute("SELECT price FROM menu_items WHERE id = %s;", (menu_item_id,))
-        item = cur.fetchone()
-        price = float(item['price']) if item else 0
-        total = price * quantity
-        
-        cur.execute("INSERT INTO orders (table_id, customer_name, status, total_amount) VALUES (%s, %s, 'pending', %s) RETURNING id;", (table_id, customer_name, total))
-        order_id = cur.fetchone()['id']
-        
-        cur.execute("INSERT INTO order_items (order_id, menu_item_id, quantity, unit_price, subtotal) VALUES (%s, %s, %s, %s, %s);", (order_id, menu_item_id, quantity, price, total))
-        
-        if table_id:
-            cur.execute("UPDATE tables SET status = 'occupied' WHERE id = %s;", (table_id,))
-            
-        conn.commit()
-        logger.info("Tạo đơn hàng mới", extra={'order_id': order_id, 'total': total, 'by': session.get('username')})
-        cur.close()
-        conn.close()
-        return redirect(url_for('orders'))
-        
-    cur.execute("SELECT o.*, t.table_number FROM orders o LEFT JOIN tables t ON o.table_id = t.id ORDER BY o.created_at DESC;")
-    all_orders = cur.fetchall()
-    cur.execute("SELECT * FROM tables ORDER BY table_number ASC;")
-    tables = cur.fetchall()
-    cur.execute("SELECT * FROM menu_items WHERE is_available = true ORDER BY name ASC;")
-    menu_items = cur.fetchall()
-    cur.close()
-    conn.close()
-    return render_template('orders.html', orders=all_orders, tables=tables, menu_items=menu_items)
-
-@app.route('/orders/<int:order_id>/status', methods=['POST'])
-@login_required
-def update_order_status(order_id):
-    status = request.form.get('status')
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("UPDATE orders SET status = %s, updated_at = NOW() WHERE id = %s;", (status, order_id))
-    
-    if status in ['completed', 'cancelled']:
-        cur.execute("SELECT table_id FROM orders WHERE id = %s;", (order_id,))
-        res = cur.fetchone()
-        if res and res['table_id']:
-            t_id = res['table_id']
-            cur.execute("SELECT COUNT(*) as cnt FROM orders WHERE table_id = %s AND status IN ('pending', 'cooking', 'served');", (t_id,))
-            if cur.fetchone()['cnt'] == 0:
-                cur.execute("UPDATE tables SET status = 'available' WHERE id = %s;", (t_id,))
-                
-    conn.commit()
-    logger.info("Cập nhật trạng thái đơn hàng", extra={'order_id': order_id, 'status': status, 'by': session.get('username')})
-    cur.close()
-    conn.close()
-    return redirect(url_for('orders'))
+    flash('Đã xóa món ăn!', 'success')
+    return redirect(url_for('admin_menu'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

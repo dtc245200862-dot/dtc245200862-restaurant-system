@@ -1,0 +1,137 @@
+{% extends "customer/base_customer.html" %}
+{% block content %}
+<div class="card card-modern p-4 mb-4 text-white" style="background: linear-gradient(135deg, #10b981, #059669);">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="fw-bold mb-1">Thực đơn Căng tin hôm nay</h2>
+            <p class="mb-0 text-light opacity-90">Đặt món trước (Pre-order) để không phải chờ đợi xếp hàng vào giờ cao điểm!</p>
+        </div>
+        <a href="/customer/orders" class="btn btn-light fw-bold text-success rounded-pill px-4">
+            <i class="bi bi-clock-history me-1"></i> Theo dõi đơn của tôi
+        </a>
+    </div>
+</div>
+
+<!-- Danh mục món ăn -->
+<div class="d-flex gap-2 mb-4 overflow-auto pb-2">
+    <a href="/customer/menu" class="btn {% if not active_cat %}btn-success{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">
+        Tất cả món
+    </a>
+    {% for c in categories %}
+    <a href="/customer/menu?category={{ c.id }}" class="btn {% if active_cat|int == c.id %}btn-success{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 text-nowrap">
+        {{ c.name }}
+    </a>
+    {% endfor %}
+</div>
+
+<!-- Lưới món ăn -->
+<div class="row g-4">
+    {% for m in menu_items %}
+    <div class="col-lg-3 col-md-4 col-sm-6">
+        <div class="card menu-card h-100">
+            <div class="menu-img-wrap">
+                {% if 'sườn' in m.name|lower or 'bò' in m.name|lower %}
+                    <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=60" alt="{{ m.name }}">
+                {% elif 'gà' in m.name|lower %}
+                    <img src="https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=500&auto=format&fit=crop&q=60" alt="{{ m.name }}">
+                {% elif 'phở' in m.name|lower or 'bún' in m.name|lower %}
+                    <img src="https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=500&auto=format&fit=crop&q=60" alt="{{ m.name }}">
+                {% elif 'bánh mì' in m.name|lower %}
+                    <img src="https://images.unsplash.com/photo-1509722747041-616f39b57569?w=500&auto=format&fit=crop&q=60" alt="{{ m.name }}">
+                {% elif 'trà' in m.name|lower or 'cà phê' in m.name|lower or 'nước ép' in m.name|lower %}
+                    <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&auto=format&fit=crop&q=60" alt="{{ m.name }}">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format&fit=crop&q=60" alt="{{ m.name }}">
+                {% endif %}
+                <span class="position-absolute top-0 end-0 m-2 badge bg-dark bg-opacity-75">{{ m.category_name }}</span>
+            </div>
+
+            <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                <div>
+                    <h6 class="fw-bold mb-1 text-dark">{{ m.name }}</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fs-5 fw-bold text-success">{{ "{:,.0f}".format(m.price) }} đ</span>
+                        <small class="text-muted"><i class="bi bi-box me-1"></i>Còn: <strong>{{ m.stock_quantity }}</strong></small>
+                    </div>
+                </div>
+
+                <div>
+                    {% if m.is_available and m.stock_quantity > 0 %}
+                        <button class="btn btn-outline-success w-100 rounded-pill fw-semibold" onclick="openOrderModal('{{ m.id }}', '{{ m.name }}', '{{ m.price }}', '{{ m.stock_quantity }}')">
+                            <i class="bi bi-cart-plus me-1"></i> Đặt món này
+                        </button>
+                    {% else %}
+                        <button class="btn btn-secondary w-100 rounded-pill disabled" disabled>Hết suất ăn</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal Đặt Món Dành Cho Sinh Viên -->
+<div class="modal fade" id="orderModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form action="/customer/order" method="POST" class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark"><i class="bi bi-bag-check-fill text-success me-2"></i>Xác nhận đặt món</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-3">
+                <input type="hidden" name="menu_item_id" id="modal_item_id">
+                <div class="bg-light p-3 rounded-3 mb-3">
+                    <h5 class="fw-bold text-dark mb-1" id="modal_item_name"></h5>
+                    <div class="fs-5 fw-bold text-success" id="modal_item_price"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-muted">Số lượng suất ăn</label>
+                    <input type="number" name="quantity" id="modal_quantity" class="form-control" value="1" min="1" max="20" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-muted">Hình thức nhận món</label>
+                    <select name="order_type" id="order_type" class="form-select" onchange="toggleTableSelect(this.value)">
+                        <option value="dine_in">🍽️ Ăn tại bàn căng tin</option>
+                        <option value="take_away">🛍️ Mang về / Đóng hộp</option>
+                    </select>
+                </div>
+
+                <div class="mb-3" id="tableSelectGroup">
+                    <label class="form-label small fw-semibold text-muted">Chọn bàn ngồi (Bàn trống)</label>
+                    <select name="table_number" class="form-select">
+                        {% for t in tables %}
+                        <option value="{{ t.table_number }}">{{ t.table_number }} ({{ t.capacity }} chỗ ngồi)</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-muted">Ghi chú cho bếp (Tùy chọn)</label>
+                    <input type="text" name="note" class="form-control" placeholder="VD: Không cay, nhiều rau, ít đá...">
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold">Gửi đơn đặt món</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function openOrderModal(id, name, price, stock) {
+        document.getElementById('modal_item_id').value = id;
+        document.getElementById('modal_item_name').innerText = name;
+        document.getElementById('modal_item_price').innerText = Number(price).toLocaleString('vi-VN') + ' đ';
+        document.getElementById('modal_quantity').max = stock;
+        new bootstrap.Modal(document.getElementById('orderModal')).show();
+    }
+    function toggleTableSelect(val) {
+        document.getElementById('tableSelectGroup').style.display = (val === 'dine_in') ? 'block' : 'none';
+    }
+</script>
+{% endblock %}
