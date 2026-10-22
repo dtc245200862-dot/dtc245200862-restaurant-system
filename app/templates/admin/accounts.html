@@ -26,7 +26,7 @@
             <label class="form-label small text-secondary">Vai trò</label>
             <select name="role" class="form-select bg-dark text-white border-secondary">
                 <option value="customer">Sinh viên (Khách)</option>
-                <option value="staff">Nhân viên Căng tin</option>
+                <option value="staff">Nhân viên Phục vụ</option>
                 <option value="admin">Quản trị viên</option>
             </select>
         </div>
@@ -56,8 +56,8 @@
                     <td>{{ u.full_name }}</td>
                     <td>
                         {% if u.role == 'admin' %}<span class="badge bg-danger">Quản trị viên (Admin)</span>
-                        {% elif u.role == 'staff' %}<span class="badge bg-primary">Nhân viên Căng tin</span>
-                        {% else %}<span class="badge bg-success">Sinh viên / Khách hàng</span>{% endif %}
+                        {% elif u.role == 'staff' %}<span class="badge bg-primary">Nhân viên Phục vụ</span>
+                        {% else %}<span class="badge bg-success">Thực khách / Khách hàng hàng</span>{% endif %}
                     </td>
                     <td>{{ u.created_at.strftime('%d/%m/%Y') }}</td>
                 </tr>

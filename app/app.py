@@ -18,19 +18,19 @@ formatter = jsonlogger.JsonFormatter(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 log_handler.setFormatter(formatter)
-logger = logging.getLogger("canteen-app")
+logger = logging.getLogger("restaurant-app")
 logger.setLevel(logging.INFO)
 logger.addHandler(log_handler)
 logger.propagate = False
 
 # Prometheus Metrics
 HTTP_REQUESTS_TOTAL = Counter(
-    'canteen_http_requests_total',
+    'restaurant_http_requests_total',
     'Tổng số lượt request HTTP',
     ['method', 'endpoint', 'status_code']
 )
 HTTP_REQUEST_DURATION = Histogram(
-    'canteen_http_request_duration_seconds',
+    'restaurant_http_request_duration_seconds',
     'Thời gian xử lý HTTP request',
     ['method', 'endpoint', 'status_code'],
     buckets=[0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5]
@@ -112,7 +112,7 @@ def health():
             'status': 'healthy',
             'database': 'connected',
             'student': 'Ho Quang Huy - DTC245200862',
-            'system': 'He thong Quan ly Nha hang / Căng tin'
+            'system': 'He thong Quan ly Nha hang'
         }), 200
     except Exception as e:
         logger.error("Health check failed", extra={'error': str(e)})
@@ -247,7 +247,7 @@ def customer_order():
         cur.execute("UPDATE tables SET status = 'occupied' WHERE table_number = %s;", (table_number,))
         
     conn.commit()
-    logger.info("Sinh viên đặt món thành công", extra={'order_id': order_id, 'user': session.get('username')})
+    logger.info("Khách hàng đặt món thành công", extra={'order_id': order_id, 'user': session.get('username')})
     cur.close()
     conn.close()
     flash('Đặt món thành công! Bạn có thể theo dõi tiến độ ở mục Đơn hàng của tôi.', 'success')

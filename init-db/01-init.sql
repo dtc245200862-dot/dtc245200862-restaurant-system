@@ -1,5 +1,5 @@
 -- ====================================================================
--- HỆ THỐNG QUẢN LÝ NHÀ HÀNG / CĂNG TIN & ĐẶT MÓN (ORDER) - ĐỀ 12
+-- HỆ THỐNG QUẢN LÝ NHÀ HÀNG & ĐẶT MÓN (ORDER) - ĐỀ 12
 -- Sinh viên: Hồ Quang Huy - MSV: DTC245200862 - Lớp: CNTT K23h
 -- Trường: ĐH Công nghệ Thông tin và Truyền thông (ICTU)
 -- Cơ sở dữ liệu: PostgreSQL 16
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     subtotal NUMERIC(12, 2) NOT NULL
 );
 
--- 7. BẢNG ĐÁNH GIÁ MÓN ĂN TỪ SINH VIÊN (REVIEWS)
+-- 7. BẢNG ĐÁNH GIÁ MÓN ĂN TỪ KHÁCH HÀNG (REVIEWS)
 CREATE TABLE IF NOT EXISTS reviews (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE SET NULL,
@@ -88,68 +88,68 @@ CREATE TABLE IF NOT EXISTS inventory_invoices (
 );
 
 -- ====================================================================
--- DỮ LIỆU KHỞI TẠO MẪU (SEED DATA CHO DEMO)
+-- DỮ LIỆU KHỞI TẠO MẪU (SEED DATA CHO DEMO NHÀ HÀNG)
 -- ====================================================================
 
 -- 1. Tài khoản mặc định cho 3 vai trò
 INSERT INTO users (username, password, full_name, role) VALUES
-('admin', '123456789', 'Quản trị viên Căng tin', 'admin'),
-('nhanvien', '123456789', 'Nhân viên Phục vụ Căng tin', 'staff'),
-('sinhvien', '123456789', 'Hồ Quang Huy (DTC245200862)', 'customer')
+('admin', '123456789', 'Hồ Quang Huy (Quản lý Nhà hàng)', 'admin'),
+('nhanvien', '123456789', 'Lê Thu Ngân (Nhân viên Phục vụ)', 'staff'),
+('sinhvien', '123456789', 'Nguyễn Văn An (Khách hàng)', 'customer')
 ON CONFLICT (username) DO NOTHING;
 
--- 2. Danh mục món ăn
+-- 2. Danh mục món ăn Nhà hàng
 INSERT INTO categories (name, description) VALUES
-('Cơm suất sinh viên', 'Cơm suất nóng hổi, đầy đủ dinh dưỡng cho sinh viên'),
-('Bún - Phở - Mì', 'Món nước ăn sáng và trưa hấp dẫn'),
-('Bánh mì & Đồ ăn nhanh', 'Phục vụ nhanh gọn giữa các ca học'),
-('Đồ uống & Tráng miệng', 'Trà đào, nước ép và đồ tráng miệng thanh mát')
+('Món khai vị & Salad', 'Các món khai vị thanh mát, kích thích vị giác'),
+('Món chính thượng hạng', 'Bò bít tết, cá hồi và các món ăn đậm đà bổ dưỡng'),
+('Món nướng & Lẩu đặc biệt', 'Set lẩu hải sản và sườn cừu nướng cao cấp'),
+('Đồ uống & Tráng miệng', 'Rượu vang, nước ép trái cây tươi và món tráng miệng')
 ON CONFLICT (name) DO NOTHING;
 
 -- 3. Món ăn, đơn giá và tồn kho suất ăn ban đầu
 INSERT INTO menu_items (category_id, name, price, stock_quantity, is_available) VALUES
-(1, 'Cơm sườn nướng mật ong', 35000, 30, true),
-(1, 'Cơm gà sốt nấm xé tay', 30000, 25, true),
-(1, 'Cơm thịt kho tàu trứng cút', 30000, 20, true),
-(2, 'Bún bò Huế giò heo', 35000, 25, true),
-(2, 'Phở gà ta lá chanh', 30000, 20, true),
-(3, 'Bánh mì pate trứng nướng bơ', 20000, 40, true),
-(3, 'Khoai tây chiên lắc phô mai', 25000, 35, true),
-(4, 'Trà đào cam sả thảo mộc', 18000, 50, true),
-(4, 'Trà sữa trân châu hoàng gia', 22000, 40, true)
+(1, 'Salad rong nho sốt mè rang', 45000, 30, true),
+(1, 'Khoai tây chiên bơ tỏi Pháp', 35000, 40, true),
+(2, 'Bò bít tết sốt tiêu đen Wagyu', 150000, 25, true),
+(2, 'Cá hồi áp chảo sốt chanh leo', 180000, 20, true),
+(2, 'Gà nướng thảo mộc ngũ vị', 120000, 25, true),
+(3, 'Set Lẩu Thái Hải Sản Hoàng Gia', 350000, 15, true),
+(4, 'Trà đào cam sả thảo mộc', 30000, 50, true),
+(4, 'Nước ép dưa hấu tươi mát lạnh', 25000, 40, true)
 ON CONFLICT DO NOTHING;
 
--- 4. Bàn ăn trong căng tin
+-- 4. Bàn ăn trong nhà hàng
 INSERT INTO tables (table_number, capacity, status) VALUES
-('Bàn 01', 4, 'available'),
+('Bàn 01 (VIP)', 4, 'available'),
 ('Bàn 02', 4, 'occupied'),
 ('Bàn 03', 2, 'available'),
-('Bàn 04', 6, 'available'),
-('Bàn 05', 8, 'available')
+('Bàn 04 (Gia đình)', 6, 'available'),
+('Bàn 05 (Sảnh tiệc)', 8, 'available')
 ON CONFLICT (table_number) DO NOTHING;
 
 -- 5. Đơn hàng mẫu ban đầu
 INSERT INTO orders (user_id, customer_name, order_type, table_number, status, total_amount, note, created_at) VALUES
-(3, 'Hồ Quang Huy (DTC245200862)', 'dine_in', 'Bàn 02', 'cooking', 53000, 'Không lấy hành tây, cho nhiều ớt', CURRENT_TIMESTAMP - INTERVAL '15 minutes'),
-(3, 'Hồ Quang Huy (DTC245200862)', 'take_away', 'Mang về', 'completed', 35000, 'Đóng gói mang về lớp K23h', CURRENT_TIMESTAMP - INTERVAL '2 hours')
+(3, 'Nguyễn Văn An (Khách hàng)', 'dine_in', 'Bàn 02', 'cooking', 225000, 'Bò bít tết làm chín vừa (medium-rare), cho nhiều sốt tiêu', CURRENT_TIMESTAMP - INTERVAL '15 minutes'),
+(3, 'Nguyễn Văn An (Khách hàng)', 'take_away', 'Mang về', 'completed', 150000, 'Đóng hộp mang về chu đáo', CURRENT_TIMESTAMP - INTERVAL '2 hours')
 ON CONFLICT DO NOTHING;
 
 -- 6. Chi tiết đơn hàng mẫu
 INSERT INTO order_items (order_id, menu_item_id, quantity, unit_price, subtotal) VALUES
-(1, 1, 1, 35000, 35000),
-(1, 8, 1, 18000, 18000),
-(2, 4, 1, 35000, 35000)
+(1, 3, 1, 150000, 150000),
+(1, 1, 1, 45000, 45000),
+(1, 7, 1, 30000, 30000),
+(2, 3, 1, 150000, 150000)
 ON CONFLICT DO NOTHING;
 
 -- 7. Đánh giá món ăn mẫu
 INSERT INTO reviews (user_id, customer_name, menu_item_name, rating, comment) VALUES
-(3, 'Hồ Quang Huy (DTC245200862)', 'Cơm sườn nướng mật ong', 5, 'Sườn nướng rất mềm và thơm, sốt mật ong vừa vị. 10/10!'),
-(3, 'Hồ Quang Huy (DTC245200862)', 'Trà đào cam sả thảo mộc', 5, 'Trà thơm mát, rất giải nhiệt sau giờ học căng thẳng.')
+(3, 'Nguyễn Văn An (Khách hàng)', 'Bò bít tết sốt tiêu đen Wagyu', 5, 'Bò bít tết thịt rất mềm, sốt tiêu đen đậm đà chuẩn vị Âu. Phục vụ chu đáo 10/10!'),
+(3, 'Nguyễn Văn An (Khách hàng)', 'Cá hồi áp chảo sốt chanh leo', 5, 'Cá hồi tươi, vỏ giòn sốt chanh leo chua ngọt vừa vặn.')
 ON CONFLICT DO NOTHING;
 
--- 8. Hóa đơn nhập hàng mẫu cho quản trị tài chính
+-- 8. Hóa đơn nhập hàng mẫu cho quản trị tài chính nhà hàng
 INSERT INTO inventory_invoices (invoice_name, purchase_cost, shipping_fee, total_cost, created_at) VALUES
-('Nhập thực phẩm tươi sống (Gà, Sườn, Thịt)', 2500000, 50000, 2550000, CURRENT_TIMESTAMP - INTERVAL '2 days'),
-('Nhập nguyên liệu đồ uống (Trà, Sữa, Siro)', 1200000, 30000, 1230000, CURRENT_TIMESTAMP - INTERVAL '1 day'),
-('Nhập rau củ quả Đà Lạt chuẩn VietGAP', 800000, 20000, 820000, CURRENT_TIMESTAMP - INTERVAL '5 hours')
+('Nhập thịt bò Wagyu & Cá hồi Nauy tươi', 4500000, 80000, 4580000, CURRENT_TIMESTAMP - INTERVAL '2 days'),
+('Nhập nguyên liệu đồ uống & rượu vang nhập khẩu', 2200000, 50000, 2250000, CURRENT_TIMESTAMP - INTERVAL '1 day'),
+('Nhập rau củ quả Đà Lạt hữu cơ chuẩn VietGAP', 1200000, 30000, 1230000, CURRENT_TIMESTAMP - INTERVAL '5 hours')
 ON CONFLICT DO NOTHING;

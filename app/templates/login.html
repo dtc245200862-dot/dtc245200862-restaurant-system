@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập Hệ thống - Căng Tin / Nhà Hàng (Đề 12)</title>
+    <title>Đăng nhập Hệ thống - Quản lý Nhà Hàng (Đề 12)</title>
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/bootstrap-icons.min.css">
     <style>
@@ -45,8 +45,8 @@
         <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle d-inline-flex mb-3">
             <i class="bi bi-shop fs-1"></i>
         </div>
-        <h3 class="fw-bold text-dark mb-1">CĂNG TIN / NHÀ HÀNG</h3>
-        <p class="text-muted small">Hệ thống Đặt món & Quản lý Phân quyền • Đề 12</p>
+        <h3 class="fw-bold text-dark mb-1">HỆ THỐNG QUẢN LÝ NHÀ HÀNG</h3>
+        <p class="text-muted small">Hệ thống Đặt món & Quản lý Nhà hàng • Đề 12</p>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -93,8 +93,8 @@
                 <div class="d-flex align-items-center gap-2">
                     <span class="badge bg-danger">Admin</span>
                     <div>
-                        <div class="fw-bold small text-dark">Hồ Quang Huy (Quản lý)</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">Giao diện Quản trị Dark Mode: Báo cáo, Chi phí, Tài khoản</div>
+                        <div class="fw-bold small text-dark">Hồ Quang Huy (Quản lý Nhà hàng)</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Giao diện Quản trị Dark Mode: Doanh thu, Chi phí nhập hàng, Lợi nhuận</div>
                     </div>
                 </div>
                 <i class="bi bi-arrow-right-circle text-danger fs-5"></i>
@@ -105,8 +105,8 @@
                 <div class="d-flex align-items-center gap-2">
                     <span class="badge bg-primary">Nhân viên</span>
                     <div>
-                        <div class="fw-bold small text-dark">Lê Thu Ngân (Thu ngân)</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">Giao diện Quản lý: Duyệt đơn đặt, Kho món ăn, Bàn ăn</div>
+                        <div class="fw-bold small text-dark">Lê Thu Ngân (Phục vụ & Thu ngân)</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Giao diện Phục vụ: Tiếp nhận order món, Sơ đồ bàn, Kiểm soát kho món</div>
                     </div>
                 </div>
                 <i class="bi bi-arrow-right-circle text-primary fs-5"></i>
@@ -115,10 +115,10 @@
             <!-- 3. Customer -->
             <div class="demo-card bg-light d-flex justify-content-between align-items-center" onclick="quickLogin('sinhvien', '123456789')">
                 <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-success">Sinh viên</span>
+                    <span class="badge bg-success">Thực khách</span>
                     <div>
-                        <div class="fw-bold small text-dark">Nguyễn Văn An (Khách)</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">Giao diện Đặt món: Chọn món theo bàn/mang về, Đánh giá</div>
+                        <div class="fw-bold small text-dark">Nguyễn Văn An (Khách hàng)</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Giao diện Khách hàng: Xem thực đơn, Gọi món tại bàn/mang về, Đánh giá</div>
                     </div>
                 </div>
                 <i class="bi bi-arrow-right-circle text-success fs-5"></i>
