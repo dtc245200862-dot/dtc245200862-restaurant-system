@@ -1,67 +1,66 @@
-TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN VÀ TRUYỀN THÔNG
-KHOA CÔNG NGHỆ THÔNG TIN
+# TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN VÀ TRUYỀN THÔNG (ICTU)
+## KHOA CÔNG NGHỆ THÔNG TIN
 
 =======================================================
-BÁO CÁO: BÀI TẬP LỚN / BÀI KIỂM TRA ĐÁNH GIÁ KỸ NĂNG
-MÔN HỌC: TRIỂN KHAI VÀ QUẢN TRỊ HỆ THỐNG PHẦN MỀM
+# BÁO CÁO ĐÁNH GIÁ KỸ NĂNG / BÀI TẬP LỚN
+### HỌC PHẦN: TRIỂN KHAI VÀ QUẢN TRỊ HỆ THỐNG PHẦN MỀM
 
-ĐỀ TÀI:
-ĐỀ 12: HỆ THỐNG QUẢN LÝ NHÀ HÀNG / ORDER
-(Website Quản lý Món ăn, Đơn hàng, Bàn ăn)
+## ĐỀ TÀI:
+# ĐỀ 12: HỆ THỐNG QUẢN LÝ NHÀ HÀNG & ĐẶT MÓN (ORDER)
+**(Website Quản lý Món ăn, Đơn hàng, Sơ đồ Bàn ăn, Báo cáo Doanh thu)**
 
-Giảng viên hướng dẫn: Bộ môn Hệ thống Thông tin & Mạng máy tính
-Sinh viên thực hiện:
+**Giảng viên hướng dẫn:** Bộ môn Hệ thống Thông tin & Mạng máy tính  
+**Sinh viên thực hiện:**
 | Họ và tên | Mã sinh viên | Email | Lớp |
 | :--- | :--- | :--- | :--- |
 | **Hồ Quang Huy** | **DTC245200862** | **dtc245200862@ictu.edu.vn** | CNTT K23h |
 
-Thái Nguyên, năm 2026
+*Thái Nguyên, năm 2026*
 =======================================================
 
-MỤC LỤC
-1. MỤC LỤC
-2. CHƯƠNG 1: TỔNG QUAN ĐỀ TÀI VÀ KIẾN TRÚC TỔNG THỂ HỆ THỐNG
-   1.1. Bối cảnh và Mục tiêu của Đề tài (Đề 12)
-   1.2. Các phân hệ nghiệp vụ cốt lõi
-   1.3. Mô hình kiến trúc Container hóa với Docker Compose
-   1.4. Thiết kế phân chia mạng cô lập (Network Isolation)
-3. CHƯƠNG 2: QUẢN LÝ MÃ NGUỒN VÀ QUY ƯỚC COMMIT TRÊN GITHUB (1.5 ĐIỂM)
-   2.1. Cấu trúc tổ chức thư mục dự án
-   2.2. Tài khoản GitHub và Quy ước đặt tên theo MSV
-   2.3. Lịch sử 03 Commit mốc có ý nghĩa theo yêu cầu
-   2.4. Tài liệu hướng dẫn triển khai (README.md) và cấu hình .env
-4. CHƯƠNG 3: TRIỂN KHAI ỨNG DỤNG WEB & CSDL POSTGRESQL + PGADMIN (1.5 ĐIỂM)
-   3.1. Thiết kế Mô hình Cơ sở Dữ liệu quan hệ PostgreSQL
-   3.2. Xây dựng Website Quản lý Nhà hàng / Order
-   3.3. Tích hợp Công cụ Quản trị CSDL pgAdmin 4
-   3.4. Cơ chế Kiểm tra Sức khỏe (Healthcheck) và Phục hồi
-5. CHƯƠNG 4: TRIỂN KHAI NGINX REVERSE PROXY VÀ BẢO MẬT SSL/HTTPS (1.5 ĐIỂM)
-   4.1. Vai trò của Nginx Reverse Proxy làm cổng vào duy nhất
-   4.2. Khởi tạo và Cấu hình Chứng chỉ Bảo mật SSL Tự ký (HTTPS)
-   4.3. Chuyển hướng HTTP sang HTTPS tự động (301 Permanent Redirect)
-   4.4. Cấu hình Security Headers chống tấn công Web
-   4.5. Cơ chế Rate Limiting chống Brute-Force và DoS
-6. CHƯƠNG 5: HỆ THỐNG GIÁM SÁT THỜI GIAN THỰC PROMETHEUS & GRAFANA (1.5 ĐIỂM)
-   5.1. Kiến trúc hệ thống giám sát Metrics thời gian thực
-   5.2. Thu thập Metrics từ ứng dụng Web (/metrics)
-   5.3. Giám sát Container (cAdvisor) và Hệ điều hành (Node Exporter)
-   5.4. Thiết lập Dashboard hiển thị trên Grafana
-7. CHƯƠNG 6: HỆ THỐNG THU THẬP LOG TẬP TRUNG LOKI & PROMTAIL (1.5 ĐIỂM)
-   6.1. Kiến trúc hệ thống quản trị Log tập trung Loki + Promtail
-   6.2. Cấu hình Structured JSON Logging cho ứng dụng
-   6.3. Cấu hình Promtail tự động thu thập Log Container
-   6.4. Thực hành và Minh chứng 03 câu truy vấn LogQL thực tế
-8. CHƯƠNG 7: TĂNG CƯỜNG BẢO MẬT HỆ THỐNG (SYSTEM HARDENING) (1.5 ĐIỂM)
-   7.1. Chạy Container với người dùng đặc quyền thấp (Non-root Container)
-   7.2. Cô lập mạng 3 tầng (Multi-tier Network Isolation)
-   7.3. Tước bỏ Linux Capabilities nguy hiểm (cap_drop: ALL)
-   7.4. Bảo mật CSDL và Kiểm soát biến môi trường (.env)
-   7.5. Ẩn thông tin phiên bản máy chủ (server_tokens off)
-9. CHƯƠNG 8: TỔNG THỂ HỆ THỐNG, HƯỚNG DẪN DEMO VÀ KẾT LUẬN (1.0 ĐIỂM)
-   8.1. Hướng dẫn vận hành 1 lệnh duy nhất bằng Docker Compose
-   8.2. Kịch bản nghiệm thu và Kiểm thử chức năng
-   8.3. Bảng đối chiếu kết quả với 7 Tiêu chí Đánh giá
-   8.4. Kết luận và Hướng phát triển
+## MỤC LỤC
+1. [CHƯƠNG 1: TỔNG QUAN ĐỀ TÀI VÀ KIẾN TRÚC TỔNG THỂ HỆ THỐNG](#chương-1-tổng-quan-đề-tài-và-kiến-trúc-tổng-thể-hệ-thống)
+   - 1.1. Bối cảnh và Mục tiêu của Đề tài (Đề 12)
+   - 1.2. Phân hệ 3 Giao diện Người dùng Độc lập (RBAC)
+   - 1.3. Mô hình Kiến trúc 10 Container với Docker Compose
+   - 1.4. Thiết kế Phân chia Mạng Cô lập (Network Isolation)
+2. [CHƯƠNG 2: QUẢN LÝ MÃ NGUỒN VÀ QUY ƯỚC COMMIT TRÊN GITHUB (1.5 ĐIỂM)](#chương-2-quản-lý-mã-nguồn-và-quy-ước-commit-trên-github-15-điểm)
+   - 2.1. Cấu trúc Tổ chức Thư mục Dự án
+   - 2.2. Tài khoản GitHub và Quy ước Đặt tên theo MSV
+   - 2.3. Lịch sử Commit và Tiến trình Phát triển
+   - 2.4. Tài liệu Hướng dẫn Triển khai (README.md) và Cấu hình .env
+3. [CHƯƠNG 3: TRIỂN KHAI ỨNG DỤNG WEB & CSDL POSTGRESQL + PGADMIN (1.5 ĐIỂM)](#chương-3-triển-khai-ứng-dụng-web--csdl-postgresql--pgadmin-15-điểm)
+   - 3.1. Thiết kế Mô hình CSDL Quan hệ PostgreSQL (8 Bảng)
+   - 3.2. Xây dựng Website Quản lý Nhà hàng / Order bằng Python Flask
+   - 3.3. Tích hợp Công cụ Quản trị CSDL pgAdmin 4
+   - 3.4. Cơ chế Kiểm tra Sức khỏe (Healthcheck) và Tự phục hồi
+4. [CHƯƠNG 4: TRIỂN KHAI NGINX REVERSE PROXY VÀ BẢO MẬT SSL/HTTPS (1.5 ĐIỂM)](#chương-4-triển-khai-nginx-reverse-proxy-và-bảo-mật-sslhttps-15-điểm)
+   - 4.1. Vai trò của Nginx Reverse Proxy làm Cổng vào Duy nhất
+   - 4.2. Khởi tạo và Cấu hình Chứng chỉ Bảo mật SSL Tự ký (HTTPS)
+   - 4.3. Chuyển hướng HTTP sang HTTPS Tự động (301 Permanent Redirect)
+   - 4.4. Cấu hình Security Headers Chống Tấn công Web Phổ biến
+   - 4.5. Cơ chế Giới hạn Tần suất Truy cập (Rate Limiting)
+5. [CHƯƠNG 5: HỆ THỐNG GIÁM SÁT THỜI GIAN THỰC PROMETHEUS & GRAFANA (1.5 ĐIỂM)](#chương-5-hệ-thống-giám-sát-thời-gian-thực-prometheus--grafana-15-điểm)
+   - 5.1. Kiến trúc Hệ thống Giám sát Metrics Thời gian thực
+   - 5.2. Thu thập Metrics Nghiệp vụ từ Ứng dụng Web (/metrics)
+   - 5.3. Giám sát Container (cAdvisor) và Hệ điều hành (Node Exporter)
+   - 5.4. Thiết lập Dashboard Hiển thị Trực quan trên Grafana
+6. [CHƯƠNG 6: HỆ THỐNG THU THẬP LOG TẬP TRUNG LOKI & PROMTAIL (1.5 ĐIỂM)](#chương-6-hệ-thống-thu-thập-log-tập-trung-loki--promtail-15-điểm)
+   - 6.1. Kiến trúc Hệ thống Quản trị Log Tập trung Loki + Promtail
+   - 6.2. Cấu hình Structured JSON Logging cho Ứng dụng Web
+   - 6.3. Cấu hình Promtail Tự động Thu thập Log Container Docker
+   - 6.4. Thực hành và Minh chứng 03 Câu truy vấn LogQL Thực tế
+7. [CHƯƠNG 7: TĂNG CƯỜNG BẢO MẬT HỆ THỐNG (SYSTEM HARDENING) (1.5 ĐIỂM)](#chương-7-tăng-cường-bảo-mật-hệ-thống-system-hardening-15-điểm)
+   - 7.1. Chạy Container với Người dùng Đặc quyền thấp (Non-root User)
+   - 7.2. Cô lập Mạng 3 Tầng (Multi-tier Network Isolation)
+   - 7.3. Tước bỏ Linux Capabilities Nguy hiểm (cap_drop: ALL)
+   - 7.4. Bảo mật CSDL và Kiểm soát Biến môi trường (.env)
+   - 7.5. Ẩn Thông tin Phiên bản Máy chủ Web (server_tokens off)
+8. [CHƯƠNG 8: TỔNG THỂ HỆ THỐNG, HƯỚNG DẪN DEMO VÀ KẾT LUẬN (1.0 ĐIỂM)](#chương-8-tổng-thể-hệ-thống-hướng-dẫn-demo-và-kết-luận-10-điểm)
+   - 8.1. Hướng dẫn Vận hành 1 Lệnh Duy nhất bằng Docker Compose
+   - 8.2. Danh mục Tài khoản và Kịch bản Nghiệm thu (Demo Checklist)
+   - 8.3. Bảng Đối chiếu Kết quả với 7 Tiêu chí Đánh giá của Học phần
+   - 8.4. Kết luận và Hướng phát triển Đề tài
 
 ---
 
@@ -76,22 +75,27 @@ Trong thời đại chuyển đổi số ngành dịch vụ ẩm thực (F&B), c
 - Quản trị log tập trung, phân tích sự cố bằng **Loki + Promtail** với ngôn ngữ truy vấn **LogQL**.
 - Áp dụng các kỹ thuật **Hardening** bảo mật nâng cao nhằm bảo vệ hạ tầng máy chủ.
 
-## 1.2. Các phân hệ nghiệp vụ cốt lõi
-Ứng dụng Website Quản lý Nhà hàng / Order đáp ứng trọn vẹn 3 nghiệp vụ chính:
-1. **Quản lý Bàn ăn (Tables Management):**
-   - Theo dõi trạng thái từng bàn theo thời gian thực: *Trống (Available)*, *Có khách (Occupied)*, *Đặt trước (Reserved)*.
-   - Thêm bàn ăn mới, tùy chỉnh sức chứa (capacity).
-   - Tự động đổi trạng thái bàn sang "Có khách" khi phát sinh đơn hàng, và tự động giải phóng bàn về "Trống" khi đơn hàng thanh toán hoàn tất.
-2. **Quản lý Thực đơn & Món ăn (Menu Management):**
-   - Phân loại món ăn theo danh mục: Món khai vị, Món chính, Món nướng & lẩu, Đồ uống & tráng miệng.
-   - Quản lý giá bán, hình ảnh mô tả.
-   - Bật/tắt trạng thái kinh doanh của món (Còn phục vụ / Tạm hết món).
-3. **Quản lý Đơn hàng & Gọi món (Orders & POS):**
-   - Tiếp nhận đơn đặt món theo từng bàn, chọn món ăn và số lượng.
-   - Tự động tính tổng tiền chính xác.
-   - Theo dõi vòng đời đơn hàng: *Chờ xác nhận (Pending) -> Đang nấu (Cooking) -> Đã lên món (Served) -> Hoàn thành (Completed) / Hủy (Cancelled)*.
+## 1.2. Phân hệ 3 Giao diện Người dùng Độc lập (RBAC)
+Hệ thống được thiết kế hoàn toàn theo mô hình phân quyền người dùng (Role-Based Access Control) với 3 không gian làm việc chuyên biệt:
+1. **Khách hàng (`/customer`):**
+   - Xem thực đơn được phân theo 4 danh mục ẩm thực sang trọng.
+   - Chọn hình thức ăn tại bàn (từ Bàn 01 đến Bàn 08) hoặc mang về.
+   - Thêm món, điều chỉnh số lượng, đặt món với nút bấm gọn gàng và giá tiền hiển thị chuẩn xác.
+   - Theo dõi trạng thái đơn hàng thời gian thực (*Đang nấu*, *Đã phục vụ*, *Hoàn thành*).
+   - Đánh giá chất lượng phục vụ và món ăn (1 đến 5 sao kèm phản hồi chi tiết).
+2. **Nhân viên Phục vụ Nhà hàng (`/staff`):**
+   - Tiếp nhận và duyệt đơn đặt món tức thời theo từng bàn.
+   - Cập nhật tiến độ chế biến đơn hàng theo vòng đời: `Chờ xử lý -> Đang nấu -> Đã lên món -> Hoàn tất`.
+   - Xem danh sách món ăn trong từng đơn rõ ràng (tên món và số lượng, không bị lỗi mã hệ thống).
+   - Kiểm soát tồn kho món ăn thành phẩm, bật/tắt trạng thái phục vụ của món.
+   - Theo dõi trực quan sơ đồ bàn ăn của nhà hàng (*Bàn trống*, *Có khách*, *Đặt trước*).
+3. **Quản trị viên Admin (`/admin`):**
+   - Bảng điều khiển tài chính trực quan: Doanh thu thực nhận, Chi phí nhập nguyên liệu, Lợi nhuận ròng.
+   - Quản lý hóa đơn nhập nguyên liệu, phí vận chuyển và công nợ nhà cung cấp.
+   - Quản lý danh sách tài khoản người dùng, phân quyền nhân viên và khách hàng.
+   - Xuất dữ liệu báo cáo phục vụ công tác thanh quyết toán định kỳ.
 
-## 1.3. Mô hình kiến trúc Container hóa với Docker Compose
+## 1.3. Mô hình Kiến trúc 10 Container với Docker Compose
 Toàn bộ hệ thống gồm 10 container dịch vụ chuyên biệt hoạt động phối hợp nhịp nhàng:
 1. `restaurant-web`: Ứng dụng Backend/Frontend viết bằng Python Flask + Gunicorn, chạy trên nền Alpine Linux siêu nhẹ.
 2. `restaurant-db`: Hệ quản trị CSDL quan hệ PostgreSQL 16 Alpine, lưu trữ dữ liệu bền vững qua Docker Named Volume (`postgres_data`).
@@ -104,7 +108,7 @@ Toàn bộ hệ thống gồm 10 container dịch vụ chuyên biệt hoạt đ�
 9. `restaurant-loki`: Máy chủ lưu trữ và lập chỉ mục log tập trung.
 10. `restaurant-promtail`: Log agent tự động thu thập log từ Docker daemon đẩy về Loki.
 
-## 1.4. Thiết kế phân chia mạng cô lập (Network Isolation)
+## 1.4. Thiết kế Phân chia Mạng Cô lập (Network Isolation)
 Thay vì sử dụng một mạng bridge mặc định tiềm ẩn nguy cơ bảo mật, hệ thống được chia tách thành **03 mạng độc lập (Network Isolation)**:
 * **`frontend-net`:** Chỉ chứa `nginx`, `web` và `pgadmin`. Nơi tiếp nhận lưu lượng truy cập từ người dùng.
 * **`backend-net`:** Chỉ chứa `web`, `pgadmin` và `db`. Cơ sở dữ liệu PostgreSQL tuyệt đối không có cổng kết nối ra ngoài Internet, ngăn ngừa hoàn toàn các cuộc tấn công quét cổng CSDL.
@@ -114,7 +118,7 @@ Thay vì sử dụng một mạng bridge mặc định tiềm ẩn nguy cơ bả
 
 # CHƯƠNG 2: QUẢN LÝ MÃ NGUỒN VÀ QUY ƯỚC COMMIT TRÊN GITHUB (1.5 ĐIỂM)
 
-## 2.1. Cấu trúc tổ chức thư mục dự án
+## 2.1. Cấu trúc Tổ chức Thư mục Dự án
 Dự án được sắp xếp khoa học, phân chia module rõ ràng:
 ```text
 dtc245200862-restaurant-system/
@@ -122,10 +126,10 @@ dtc245200862-restaurant-system/
 │   ├── app.py                  # Backend Flask xử lý logic nghiệp vụ, metrics, logs
 │   ├── requirements.txt        # Danh sách thư viện Python
 │   ├── Dockerfile              # Dockerfile đa tầng, non-root user (Hardening)
-│   ├── templates/              # Giao diện HTML (base, index, tables, menu, orders)
-│   └── static/                 # Tệp CSS, JS tĩnh
+│   ├── templates/              # Giao diện HTML (customer, staff, admin, login)
+│   └── static/                 # Tệp CSS, JS tĩnh (Bootstrap 5, Icons, Chart.js)
 ├── init-db/                    # Tập lệnh khởi tạo CSDL
-│   └── 01-init.sql             # Schema bảng, khóa ngoại và dữ liệu mẫu ban đầu
+│   └── 01-init.sql             # Schema 8 bảng, khóa ngoại và dữ liệu mẫu nhà hàng
 ├── nginx/                      # Cấu hình Nginx Reverse Proxy & SSL
 │   ├── nginx.conf              # File cấu hình proxy, security headers, rate limit
 │   └── ssl/                    # Chứng chỉ số SSL tự ký (server.crt, server.key)
@@ -144,16 +148,16 @@ dtc245200862-restaurant-system/
 └── README.md                   # Hướng dẫn chi tiết cài đặt và vận hành hệ thống
 ```
 
-## 2.2. Tài khoản GitHub và Quy ước đặt tên theo MSV
+## 2.2. Tài khoản GitHub và Quy ước Đặt tên theo MSV
 Theo đúng yêu cầu của đề tài:
-- Tài khoản GitHub / Tên Repository được đặt theo Mã sinh viên:  
-  **`dtc245200862`**  
-  URL: `https://github.com/dtc245200862/dtc245200862-restaurant-system`
+- Tài khoản GitHub: **`dtc245200862-dot`**
+- Tên Repository: **`dtc245200862-restaurant-system`**  
+  URL: `https://github.com/dtc245200862-dot/dtc245200862-restaurant-system.git`
 - Email tác giả commit: `dtc245200862@ictu.edu.vn`
-- Tác giả: `Hồ Quang Huy`
+- Tác giả: `Hồ Quang Huy` (MSV: `DTC245200862`)
 
-## 2.3. Lịch sử 03 Commit mốc có ý nghĩa theo yêu cầu
-Kho mã nguồn phản ánh trung thực tiến trình xây dựng hệ thống với đúng 3 commit mốc rõ ràng:
+## 2.3. Lịch sử Commit và Tiến trình Phát triển
+Kho mã nguồn phản ánh trung thực tiến trình xây dựng hệ thống với các commit mốc rõ ràng:
 1. **Commit 1 (`1458fb8`):**  
    *Thông điệp:* `commit 1: Trien khai Website Quan ly Nha hang, PostgreSQL, pgAdmin va Nginx Reverse Proxy voi SSL`  
    *Nội dung:* Đóng gói ứng dụng web quản lý món ăn, bàn ăn, đơn hàng; tích hợp CSDL PostgreSQL 16 và pgAdmin; thiết lập Nginx Reverse Proxy với HTTPS tự ký và Security Headers.
@@ -163,16 +167,21 @@ Kho mã nguồn phản ánh trung thực tiến trình xây dựng hệ thống 
 3. **Commit 3 (`2cca163`):**  
    *Thông điệp:* `commit 3: Trien khai log tap trung Loki, Promtail va Hardening bao mat he thong`  
    *Nội dung:* Xây dựng hệ thống log tập trung với Grafana Loki và Promtail; cấu hình structured JSON logging; áp dụng các biện pháp bảo mật Hardening (non-root container, network isolation, drop capabilities).
+4. **Commit Tinh chỉnh & Nâng cấp Giao diện (`b466d39`):**  
+   *Thông điệp:* `fix(ui): thu nho nut danh muc, gia tien va sua loi hien thi mon da goi o trang quan ly`  
+   *Nội dung:* Chuẩn hóa kích thước nút danh mục dạng pill nhỏ gọn, điều chỉnh font giá món ăn cân đối, giải quyết triệt để lỗi xung đột `dict.items` trên trang quản lý đơn của nhân viên.
 
 Minh chứng lệnh kiểm tra lịch sử commit trong hệ thống:
 ```bash
-hohuy@ubuntu:~/dtc245200862-restaurant-system$ git log --oneline
-2cca163 commit 3: Trien khai log tap trung Loki, Promtail va Hardening bao mat he thong
-f43e56a commit 2: Tich hop he thong giam sat Prometheus va Grafana cho web, DB va container
-1458fb8 commit 1: Trien khai Website Quan ly Nha hang, PostgreSQL, pgAdmin va Nginx Reverse Proxy voi SSL
+hohuy@ubuntu:~/dtc245200862-restaurant-system$ git log --oneline -n 5
+b466d39 fix(ui): thu nho nut danh muc, gia tien va sua loi hien thi mon da goi o trang quan ly
+4457744 feat(branding): chuan hoa 100% thuong hieu Nha Hang (Restaurant Management System) cho De 12
+6aee903 feat(ui): tich hop thu vien Bootstrap 5 va Icon offline truc tiep vao static assets
+23ae29f fix(system): dong bo CSDL init.sql, xu ly hoan ton kho khi huy don va cap quyen root cho Promtail
+4a27b3b docs: them bao cao he thong va huong dan readme
 ```
 
-## 2.4. Tài liệu hướng dẫn triển khai (README.md) và cấu hình .env
+## 2.4. Tài liệu Hướng dẫn Triển khai (README.md) và Cấu hình .env
 Tệp `README.md` cung cấp đầy đủ thông tin:
 - Thông tin sinh viên, mã đề tài, trường lớp.
 - Kiến trúc mạng và bảng danh mục các cổng kết nối.
@@ -185,19 +194,23 @@ Tệp `.env.example` liệt kê đầy đủ các biến môi trường cần th
 
 # CHƯƠNG 3: TRIỂN KHAI ỨNG DỤNG WEB & CSDL POSTGRESQL + PGADMIN (1.5 ĐIỂM)
 
-## 3.1. Thiết kế Mô hình Cơ sở Dữ liệu quan hệ PostgreSQL
-Cơ sở dữ liệu `restaurant_db` được thiết kế chuẩn hóa, gồm 5 bảng với mối quan hệ ràng buộc chặt chẽ:
-* **`tables` (Bàn ăn):** Lưu mã số bàn (`table_number`), sức chứa (`capacity`), trạng thái (`status`: available, occupied, reserved).
-* **`categories` (Danh mục):** Phân loại thực đơn (`name`, `description`).
-* **`menu_items` (Món ăn):** Tên món (`name`), đơn giá (`price`), tình trạng phục vụ (`is_available`), liên kết khóa ngoại với `categories(id)`.
-* **`orders` (Đơn hàng):** Khách hàng (`customer_name`), tổng tiền (`total_amount`), trạng thái (`status`: pending, cooking, served, completed, cancelled), liên kết khóa ngoại với `tables(id)`.
-* **`order_items` (Chi tiết đơn):** Lưu từng món trong đơn, số lượng (`quantity`), đơn giá tại thời điểm đặt (`unit_price`), thành tiền (`subtotal`).
+## 3.1. Thiết kế Mô hình CSDL Quan hệ PostgreSQL (8 Bảng)
+Cơ sở dữ liệu `restaurant_db` được thiết kế chuẩn hóa bậc 3 (3NF), gồm 8 bảng với các ràng buộc khóa ngoại chặt chẽ:
+1. **`users` (Người dùng & Phân quyền):** Lưu `id`, `username`, mật khẩu băm, họ tên và vai trò (`role IN ('admin', 'staff', 'customer')`).
+2. **`categories` (Danh mục Món ăn):** 4 nhóm ẩm thực nhà hàng chính: *Món khai vị & Salad*, *Món chính thượng hạng*, *Món nướng & Lẩu đặc biệt*, *Đồ uống & Tráng miệng*.
+3. **`menu_items` (Món ăn & Tồn kho):** Tên món, đơn giá, số lượng tồn kho thành phẩm (`stock_quantity >= 0`), trạng thái phục vụ (`is_available`), liên kết khóa ngoại với `categories(id)`.
+4. **`tables` (Sơ đồ Bàn ăn):** Lưu mã số bàn (`table_number`), sức chứa (`capacity`), trạng thái (`status IN ('available', 'occupied', 'reserved')`).
+5. **`orders` (Đơn đặt món):** Khách hàng (`customer_name`), hình thức (`order_type IN ('dine_in', 'take_away')`), số bàn, trạng thái (`status IN ('pending', 'cooking', 'served', 'completed', 'cancelled')`), tổng tiền, ghi chú chế biến.
+6. **`order_items` (Chi tiết Đơn hàng):** Khóa ngoại liên kết `orders(id)` và `menu_items(id)`, lưu số lượng (`quantity`), đơn giá tại thời điểm đặt (`unit_price`), thành tiền (`subtotal`).
+7. **`reviews` (Đánh giá Khách hàng):** Lưu đánh giá chất lượng món ăn (1 đến 5 sao) và bình luận trải nghiệm của thực khách.
+8. **`inventory_invoices` (Chi phí Nhập hàng):** Ghi nhận hóa đơn mua nguyên vật liệu, tiền vận chuyển, tổng chi phí để phục vụ phân hệ tính lợi nhuận ròng của Quản trị viên.
 
-Tệp `init-db/01-init.sql` được gắn vào thư mục `/docker-entrypoint-initdb.d` của container PostgreSQL để tự động tạo schema và nạp dữ liệu khởi tạo khi container khởi chạy lần đầu tiên.
+Tệp `init-db/01-init.sql` được gắn tự động vào thư mục `/docker-entrypoint-initdb.d` của PostgreSQL để khởi tạo toàn bộ cấu trúc và dữ liệu mẫu khi hệ thống khởi chạy lần đầu.
 
-## 3.2. Xây dựng Website Quản lý Nhà hàng / Order
+## 3.2. Xây dựng Website Quản lý Nhà hàng / Order bằng Python Flask
 Ứng dụng web được phát triển bằng Python 3.12 sử dụng micro-framework Flask kết hợp server Gunicorn chuẩn công nghiệp:
 - Giao diện thân thiện, chuẩn Bootstrap 5 responsive trên cả điện thoại và máy tính.
+- Tích hợp toàn bộ thư viện tĩnh (Bootstrap CSS/JS, Bootstrap Icons) cục bộ trong `/static`, đảm bảo hệ thống hiển thị trọn vẹn ngay cả trong môi trường máy chủ nội bộ không có kết nối Internet.
 - Xử lý giao dịch an toàn với cơ chế Connection Pooling (`psycopg2.pool`) và Transaction (`BEGIN ... COMMIT / ROLLBACK`), đảm bảo tính nhất quán dữ liệu khi tạo đơn hàng gồm nhiều món ăn.
 - Endpoint `/health` cung cấp trạng thái sống còn của ứng dụng và kết nối CSDL, trả về JSON chuẩn RESTful.
 
@@ -210,7 +223,7 @@ pgAdmin 4 được container hóa trong dịch vụ `restaurant-pgadmin`:
   - Mật khẩu: `StrongPass#2026`
 - Hỗ trợ trực quan hóa bảng biểu, thực thi truy vấn SQL, sao lưu và phục hồi dữ liệu nhà hàng nhanh chóng.
 
-## 3.4. Cơ chế Kiểm tra Sức khỏe (Healthcheck) và Phục hồi
+## 3.4. Cơ chế Kiểm tra Sức khỏe (Healthcheck) và Tự phục hồi
 Container CSDL PostgreSQL được cấu hình chỉ thị `healthcheck`:
 ```yaml
 healthcheck:
@@ -231,7 +244,7 @@ depends_on:
 
 # CHƯƠNG 4: TRIỂN KHAI NGINX REVERSE PROXY VÀ BẢO MẬT SSL/HTTPS (1.5 ĐIỂM)
 
-## 4.1. Vai trò của Nginx Reverse Proxy làm cổng vào duy nhất
+## 4.1. Vai trò của Nginx Reverse Proxy làm Cổng vào Duy nhất
 Nginx đóng vai trò là "người gác cổng" (Edge Gateway/Reverse Proxy) duy nhất của hệ thống:
 - Chiếm dụng hai cổng chuẩn Internet: Port 80 (HTTP) và Port 443 (HTTPS).
 - Người dùng từ bên ngoài không thể truy cập trực tiếp vào các cổng nội bộ của Web (5000), pgAdmin (80), hay PostgreSQL (5432).
@@ -240,10 +253,7 @@ Nginx đóng vai trò là "người gác cổng" (Edge Gateway/Reverse Proxy) du
 ## 4.2. Khởi tạo và Cấu hình Chứng chỉ Bảo mật SSL Tự ký (HTTPS)
 Chứng chỉ bảo mật SSL (X.509) được tạo tự động với thuật toán mã hóa RSA 2048-bit, thời hạn 365 ngày:
 ```bash
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout nginx/ssl/server.key \
-  -out nginx/ssl/server.crt \
-  -subj "/C=VN/ST=ThaiNguyen/L=ThaiNguyen/O=ICTU/OU=CNTT/CN=localhost"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048   -keyout nginx/ssl/server.key   -out nginx/ssl/server.crt   -subj "/C=VN/ST=ThaiNguyen/L=ThaiNguyen/O=ICTU/OU=CNTT/CN=localhost"
 ```
 Nginx được cấu hình sử dụng các giao thức mã hóa an toàn nhất hiện nay là **TLSv1.2** và **TLSv1.3**, loại bỏ các giao thức cũ tiềm ẩn lỗ hổng như SSLv3, TLSv1.0:
 ```nginx
@@ -251,7 +261,7 @@ ssl_protocols TLSv1.2 TLSv1.3;
 ssl_ciphers HIGH:!aNULL:!MD5;
 ```
 
-## 4.3. Chuyển hướng HTTP sang HTTPS tự động (301 Permanent Redirect)
+## 4.3. Chuyển hướng HTTP sang HTTPS Tự động (301 Permanent Redirect)
 Khi người dùng truy cập bằng giao thức không an toàn qua cổng 80 (`http://`), Nginx sẽ tự động trả về mã chuyển hướng vĩnh viễn 301 chuyển sang cổng 443 (`https://`):
 ```nginx
 server {
@@ -261,7 +271,7 @@ server {
 }
 ```
 
-## 4.4. Cấu hình Security Headers chống tấn công Web
+## 4.4. Cấu hình Security Headers Chống Tấn công Web Phổ biến
 Nginx được thiết lập các tiêu đề HTTP bảo mật nâng cao nhằm ngăn chặn các kỹ thuật tấn công phổ biến:
 ```nginx
 add_header X-Frame-Options "SAMEORIGIN" always;
@@ -275,7 +285,7 @@ add_header Content-Security-Policy "default-src 'self' https: 'unsafe-inline' 'u
 - **Strict-Transport-Security (HSTS):** Bắt buộc trình duyệt luôn giao tiếp qua HTTPS trong vòng 1 năm.
 - **Content-Security-Policy (CSP):** Kiểm soát nguồn gốc tải tài nguyên (scripts, images, styles), chống tấn công Cross-Site Scripting (XSS).
 
-## 4.5. Cơ chế Rate Limiting chống Brute-Force và DoS
+## 4.5. Cơ chế Giới hạn Tần suất Truy cập (Rate Limiting)
 Nginx thiết lập vùng kiểm soát tần suất truy cập dựa trên địa chỉ IP (`$binary_remote_addr`):
 ```nginx
 limit_req_zone $binary_remote_addr zone=one:10m rate=10r/s;
@@ -292,12 +302,12 @@ Mỗi địa chỉ IP chỉ được phép gửi tối đa 10 request/giây (cho
 
 # CHƯƠNG 5: HỆ THỐNG GIÁM SÁT THỜI GIAN THỰC PROMETHEUS & GRAFANA (1.5 ĐIỂM)
 
-## 5.1. Kiến trúc hệ thống giám sát Metrics thời gian thực
+## 5.1. Kiến trúc Hệ thống Giám sát Metrics Thời gian thực
 Hệ thống áp dụng mô hình giám sát chủ động (Pull-based Model) của **Prometheus**:
 - Prometheus đóng vai trò trung tâm, định kỳ 5 giây (`scrape_interval: 5s`) gửi HTTP request đến các endpoint `/metrics` của từng thành phần để lấy thông số.
 - Các thông số được lưu dưới dạng chuỗi thời gian (Time-series data) kèm nhãn (Labels) giúp truy vấn linh hoạt.
 
-## 5.2. Thu thập Metrics từ ứng dụng Web (/metrics)
+## 5.2. Thu thập Metrics Nghiệp vụ từ Ứng dụng Web (/metrics)
 Ứng dụng Python Flask được tích hợp thư viện `prometheus-client`, cung cấp các chỉ số đo lường tùy biến:
 - `restaurant_http_requests_total`: Bộ đếm (Counter) tổng lượt request phân loại theo phương thức HTTP (`GET`, `POST`), route (`/`, `/tables`, `/menu`, `/orders`) và mã phản hồi (`200`, `404`, `500`).
 - `restaurant_http_request_duration_seconds`: Biểu đồ phân bổ (Histogram) đo thời gian xử lý phản hồi của từng request (độ trễ latency).
@@ -310,7 +320,7 @@ Bên cạnh ứng dụng web, hệ thống triển khai hai exporter chuyên d�
 
 Trạng thái hoạt động kiểm tra thực tế: Cả 4 targets (`cadvisor`, `node-exporter`, `prometheus`, `restaurant-web`) đều đạt trạng thái **`UP` 100%**.
 
-## 5.4. Thiết lập Dashboard hiển thị trên Grafana
+## 5.4. Thiết lập Dashboard Hiển thị Trực quan trên Grafana
 Grafana được liên kết tự động với Prometheus thông qua cơ chế **Datasource Provisioning** (`grafana/provisioning/datasources/datasources.yml`), không cần cấu hình thủ công qua giao diện:
 - Địa chỉ truy cập: `http://localhost:3000` (hoặc `http://192.168.75.130:3000`)
 - Tài khoản: `admin` / `StrongPass#2026`
@@ -323,12 +333,12 @@ Grafana được liên kết tự động với Prometheus thông qua cơ chế 
 
 # CHƯƠNG 6: HỆ THỐNG THU THẬP LOG TẬP TRUNG LOKI & PROMTAIL (1.5 ĐIỂM)
 
-## 6.1. Kiến trúc hệ thống quản trị Log tập trung Loki + Promtail
+## 6.1. Kiến trúc Hệ thống Quản trị Log Tập trung Loki + Promtail
 Khác với mô hình ELK Stack truyền thống nặng nề, hệ thống lựa chọn giải pháp **Grafana Loki**:
 - Loki được mệnh danh là "Prometheus dành cho Logs": chỉ lập chỉ mục (index) các nhãn (metadata labels) thay vì lập chỉ mục toàn văn bản (full-text index), giúp tiết kiệm đến 80% bộ nhớ RAM và tài nguyên ổ cứng.
 - **Promtail** đóng vai trò là Log Shipper: chạy nền, đọc các tệp log dạng JSON do Docker Daemon sinh ra tại `/var/lib/docker/containers/*/*-json.log`, gắn nhãn nhận dạng rồi đẩy (Push) về Loki qua cổng 3100.
 
-## 6.2. Cấu hình Structured JSON Logging cho ứng dụng
+## 6.2. Cấu hình Structured JSON Logging cho Ứng dụng Web
 Mọi hành vi trong ứng dụng web đều được định dạng dạng cấu trúc JSON thông qua thư viện `python-json-logger`:
 ```json
 {
@@ -346,7 +356,7 @@ Mọi hành vi trong ứng dụng web đều được định dạng dạng cấ
 ```
 Nhờ định dạng JSON, Promtail và Loki có thể bóc tách từng trường dữ liệu (`status`, `duration_ms`, `method`) để lọc và phân tích chính xác tuyệt đối.
 
-## 6.3. Cấu hình Promtail tự động thu thập Log Container
+## 6.3. Cấu hình Promtail Tự động Thu thập Log Container Docker
 Trong tệp `promtail/promtail-config.yml`, Promtail được cấu hình:
 ```yaml
 server:
@@ -363,7 +373,7 @@ scrape_configs:
 ```
 Container Promtail được cấp quyền đọc tệp log của Docker (`/var/lib/docker/containers:ro`) và Docker Socket (`/var/run/docker.sock:ro`).
 
-## 6.4. Thực hành và Minh chứng 03 câu truy vấn LogQL thực tế
+## 6.4. Thực hành và Minh chứng 03 Câu truy vấn LogQL Thực tế
 Tại giao diện Grafana > **Explore** > Chọn **Loki Datasource**, thực hiện 03 câu truy vấn LogQL tiêu biểu:
 
 ### Truy vấn 1: Xem toàn bộ luồng Log của ứng dụng Web Quản lý Nhà hàng
@@ -390,24 +400,23 @@ Tại giao diện Grafana > **Explore** > Chọn **Loki Datasource**, thực hi�
 
 Nhằm đáp ứng tiêu chí bảo mật khắt khe của học phần, nhóm đã áp dụng đồng bộ **05 biện pháp Hardening toàn diện**:
 
-## 7.1. Chạy Container với người dùng đặc quyền thấp (Non-root Container)
+## 7.1. Chạy Container với Người dùng Đặc quyền thấp (Non-root User)
 Theo mặc định, Docker chạy tiến trình bên trong container với quyền `root` (UID: 0). Nếu ứng dụng bị chiếm quyền qua lỗ hổng RCE, tin tặc có thể leo thang đặc quyền ra máy chủ vật lý.
 *Giải pháp:* Trong `app/Dockerfile`, nhóm đã tạo riêng một nhóm và tài khoản người dùng không đặc quyền:
 ```dockerfile
-RUN addgroup -g 1001 appgroup && \
-    adduser -u 1001 -G appgroup -s /bin/sh -D appuser
+RUN addgroup -g 1001 appgroup &&     adduser -u 1001 -G appgroup -s /bin/sh -D appuser
 ...
 USER appuser
 ```
 Tiến trình Gunicorn của ứng dụng chạy hoàn toàn dưới danh nghĩa `appuser` (UID: 1001), triệt tiêu nguy cơ chiếm quyền root máy chủ.
 
-## 7.2. Cô lập mạng 3 tầng (Multi-tier Network Isolation)
+## 7.2. Cô lập Mạng 3 Tầng (Multi-tier Network Isolation)
 Hệ thống không dùng mạng bridge phẳng mà phân chia làm 3 phân vùng mạng Docker riêng biệt:
 - `frontend-net`: Vùng công cộng tiếp nhận Internet.
 - `backend-net`: Vùng lưu trữ dữ liệu tuyệt mật. Container `restaurant-db` chỉ cắm vào mạng này và **không khai báo mục `ports`** để không xuất cổng 5432 ra ngoài máy chủ thật.
 - `monitoring-net`: Vùng giám sát vận hành tách biệt.
 
-## 7.3. Tước bỏ Linux Capabilities nguy hiểm (cap_drop: ALL)
+## 7.3. Tước bỏ Linux Capabilities Nguy hiểm (cap_drop: ALL)
 Linux Capabilities chia nhỏ quyền root thành các quyền riêng lẻ. Trong tệp `docker-compose.yml`, dịch vụ Web được cấu hình tước bỏ toàn bộ đặc quyền:
 ```yaml
 cap_drop:
@@ -415,11 +424,11 @@ cap_drop:
 ```
 Ứng dụng web bị chặn hoàn toàn các thao tác can thiệp hệ điều hành như thay đổi cấu hình mạng (`NET_ADMIN`), tải kernel module (`SYS_MODULE`), hay thay đổi quyền sở hữu tệp (`CHOWN`).
 
-## 7.4. Bảo mật CSDL và Kiểm soát biến môi trường (.env)
+## 7.4. Bảo mật CSDL và Kiểm soát Biến môi trường (.env)
 - Toàn bộ thông tin mật khẩu của CSDL, pgAdmin, Grafana đều tuân thủ chính sách mật khẩu phức tạp (chứa chữ hoa, chữ thường, số, ký tự đặc biệt, độ dài trên 12 ký tự: `StrongPass#2026`).
 - Mật khẩu được cô lập trong file `.env`, file này được thêm vào `.gitignore` để không bao giờ bị lộ lọt lên kho mã nguồn công khai.
 
-## 7.5. Ẩn thông tin phiên bản máy chủ (server_tokens off)
+## 7.5. Ẩn Thông tin Phiên bản Máy chủ Web (server_tokens off)
 Trong cấu hình Nginx (`nginx/nginx.conf`), nhóm bật cờ:
 ```nginx
 server_tokens off;
@@ -430,7 +439,7 @@ Khi người dùng hoặc công cụ quét bảo mật gửi request, header HTT
 
 # CHƯƠNG 8: TỔNG THỂ HỆ THỐNG, HƯỚNG DẪN DEMO VÀ KẾT LUẬN (1.0 ĐIỂM)
 
-## 8.1. Hướng dẫn vận hành 1 lệnh duy nhất bằng Docker Compose
+## 8.1. Hướng dẫn Vận hành 1 Lệnh Duy nhất bằng Docker Compose
 Để khởi động toàn bộ 10 thành phần của hệ thống, người chấm chỉ cần đứng tại thư mục gốc và chạy 1 lệnh duy nhất:
 ```bash
 docker compose up -d
@@ -448,36 +457,47 @@ docker compose logs -f
 docker compose down
 ```
 
-## 8.2. Kịch bản nghiệm thu và Kiểm thử chức năng
-Bảng kịch bản kiểm thử phục vụ buổi bảo vệ (Demo Checklist):
+## 8.2. Danh mục Tài khoản và Kịch bản Nghiệm thu (Demo Checklist)
 
+### Bảng Danh mục Tài khoản Hệ thống:
+| Phân hệ / Dịch vụ | Địa chỉ truy cập | Tài khoản đăng nhập | Mật khẩu | Vai trò |
+| :--- | :--- | :--- | :--- | :--- |
+| **Giao diện Khách hàng** | `https://192.168.75.130/customer/menu` | `sinhvien` | `123456789` | Khách xem menu, đặt món, đánh giá |
+| **Giao diện Nhân viên** | `https://192.168.75.130/staff/orders` | `nhanvien` | `123456789` | Tiếp nhận đơn, cập nhật trạng thái |
+| **Giao diện Quản trị viên** | `https://192.168.75.130/admin/dashboard` | `admin` | `123456789` | Quản trị tài chính, báo cáo, tài khoản |
+| **Quản trị CSDL pgAdmin** | `https://192.168.75.130/pgadmin/` | `dtc245200862@ictu.edu.vn` | `StrongPass#2026` | Quản trị 8 bảng PostgreSQL |
+| **Giám sát Grafana** | `http://192.168.75.130:3000` | `admin` | `StrongPass#2026` | Xem Dashboard Metrics & Loki Logs |
+| **Giám sát Prometheus** | `http://192.168.75.130:9090` | *(Không cần mật khẩu)* | *(Không cần)* | Xem trạng thái 4 Targets Metrics |
+
+### Kịch bản Nghiệm thu Chức năng (Demo Checklist):
 | STT | Thành phần kiểm thử | Thao tác thực hiện | Kết quả mong đợi | Đánh giá |
 | :---: | :--- | :--- | :--- | :---: |
-| 1 | **Website Quản lý Nhà hàng** | Truy cập `https://192.168.75.130/` | Giao diện Dashboard hiển thị đầy đủ số bàn, doanh thu, danh sách đơn hàng | **ĐẠT** |
-| 2 | **Quản lý Bàn ăn** | Vào `/tables`, thêm Bàn 09, đổi trạng thái bàn | Trạng thái đổi màu (Xanh/Đỏ/Vàng), lưu tức thì vào PostgreSQL | **ĐẠT** |
-| 3 | **Quản lý Món ăn & Gọi món** | Vào `/menu` thêm món mới, vào `/orders` tạo đơn gọi món | Đơn hàng tạo thành công, tự động đổi trạng thái bàn sang "Có khách" | **ĐẠT** |
-| 4 | **Nginx Reverse Proxy & SSL** | Truy cập `http://...` (Port 80) | Tự động redirect 301 sang `https://...` (Port 443), ổ khóa bảo mật SSL hiển thị | **ĐẠT** |
-| 5 | **Quản trị CSDL pgAdmin** | Truy cập `https://.../pgadmin/` | Đăng nhập tài khoản `dtc245200862@ictu.edu.vn`, xem được 5 bảng CSDL | **ĐẠT** |
-| 6 | **Giám sát Prometheus** | Truy cập `http://192.168.75.130:9090/targets` | Cả 4 targets (`web`, `cadvisor`, `node-exporter`, `prometheus`) đều báo `UP` | **ĐẠT** |
-| 7 | **Grafana Dashboard** | Truy cập `http://192.168.75.130:3000` | Tự động nhận diện Data Source Prometheus & Loki, đồ thị hiển thị realtime | **ĐẠT** |
-| 8 | **Truy vấn LogQL Loki** | Vào Grafana Explore, chạy query `{job="docker-containers"}` | Toàn bộ log của web app và Nginx hiển thị theo thời gian thực | **ĐẠT** |
-| 9 | **Kiểm tra Hardening** | Kiểm tra quyền bên trong container web | Chạy lệnh `id` trong container web hiển thị `uid=1001(appuser)` (Non-root) | **ĐẠT** |
+| 1 | **Nginx Reverse Proxy & SSL** | Truy cập `http://192.168.75.130/` (Port 80) | Tự động chuyển hướng 301 sang `https://...` (Port 443), hiển thị chứng chỉ SSL an toàn | **ĐẠT** |
+| 2 | **Đăng nhập & Phân quyền (RBAC)** | Đăng nhập tài khoản `admin`, `nhanvien`, `sinhvien` | Điều hướng chính xác vào từng phân hệ chuyên biệt | **ĐẠT** |
+| 3 | **Khách hàng Đặt món** | Vào `/customer/menu`, chọn món, bấm "Đặt món này" | Nút bấm nhỏ gọn dạng pill, giá tiền vừa vặn, đơn gửi tức thì vào hệ thống | **ĐẠT** |
+| 4 | **Nhân viên Quản lý Đơn hàng** | Vào `/staff/orders`, kiểm tra đơn mới | Cột "Món đã gọi" hiển thị đầy đủ tên món và số lượng, không bị lỗi mã hệ thống | **ĐẠT** |
+| 5 | **Admin Quản trị Tài chính** | Vào `/admin/dashboard` | Hiển thị biểu đồ doanh thu, tính lợi nhuận ròng (Doanh thu - Chi phí) | **ĐẠT** |
+| 6 | **Quản trị CSDL pgAdmin** | Truy cập `https://.../pgadmin/` | Quản trị trọn vẹn 8 bảng CSDL PostgreSQL 16 | **ĐẠT** |
+| 7 | **Giám sát Prometheus** | Truy cập `http://192.168.75.130:9090/targets` | Cả 4 targets (`web`, `cadvisor`, `node-exporter`, `prometheus`) đều báo `UP` | **ĐẠT** |
+| 8 | **Grafana Dashboard** | Truy cập `http://192.168.75.130:3000` | Tự động nhận diện Data Source Prometheus & Loki, đồ thị hiển thị realtime | **ĐẠT** |
+| 9 | **Truy vấn LogQL Loki** | Vào Grafana Explore, chạy query `{job="docker-containers"}` | Toàn bộ log của web app và Nginx hiển thị theo thời gian thực | **ĐẠT** |
+| 10 | **Kiểm tra Hardening** | Kiểm tra quyền bên trong container web | Chạy lệnh `id` trong container web hiển thị `uid=1001(appuser)` (Non-root) | **ĐẠT** |
 
-## 8.3. Bảng đối chiếu kết quả với 7 Tiêu chí Đánh giá của Học phần
+## 8.3. Bảng Đối chiếu Kết quả với 7 Tiêu chí Đánh giá của Học phần
 
 | Tiêu chí đánh giá | Điểm tối đa | Hiện trạng hoàn thành của Dự án | Tự đánh giá |
 | :--- | :---: | :--- | :---: |
-| **1. Quản lý mã nguồn trên GitHub** | **1.5** | Repository đầy đủ, tài khoản đặt tên theo MSV `dtc245200862`, đủ 03 commit mốc rõ ràng có ý nghĩa, tệp README.md hướng dẫn chi tiết. | **1.5 / 1.5** |
-| **2. Triển khai ứng dụng + Database** | **1.5** | Website Quản lý Nhà hàng / Order hoàn chỉnh, CSDL PostgreSQL 16 kết nối ổn định, pgAdmin hoạt động hoàn hảo. | **1.5 / 1.5** |
+| **1. Quản lý mã nguồn trên GitHub** | **1.5** | Repository đầy đủ, tài khoản đặt tên theo MSV `dtc245200862-dot`, các commit mốc rõ ràng có ý nghĩa, tệp README.md hướng dẫn chi tiết. | **1.5 / 1.5** |
+| **2. Triển khai ứng dụng + Database** | **1.5** | Website Quản lý Nhà hàng / Order hoàn chỉnh với 3 phân hệ, CSDL PostgreSQL 16 gồm 8 bảng kết nối ổn định, pgAdmin hoạt động hoàn hảo. | **1.5 / 1.5** |
 | **3. Nginx Reverse Proxy** | **1.5** | Cấu hình proxy chuẩn xác, HTTPS tự ký mã hóa TLS 1.2/1.3, đầy đủ Security Headers (HSTS, CSP, X-Frame-Options), Rate Limiting. | **1.5 / 1.5** |
 | **4. Hệ thống giám sát (Prometheus + Grafana)** | **1.5** | Prometheus cào metrics web (/metrics), cAdvisor, Node Exporter; Grafana tự nạp Datasource và trực quan hóa trực tiếp. | **1.5 / 1.5** |
 | **5. Hệ thống log tập trung (Loki)** | **1.5** | Loki + Promtail hoạt động ổn định, log dạng cấu trúc JSON, thực hiện thành công 03 câu truy vấn LogQL chuyên sâu. | **1.5 / 1.5** |
 | **6. Hardening hệ thống** | **1.5** | Áp dụng 05 giải pháp: Non-root container (appuser 1001), Network isolation 3 tầng, Dropping Linux capabilities, Mật khẩu mạnh qua .env, Ẩn server tokens. | **1.5 / 1.5** |
-| **7. Tổng thể & Trình bày** | **1.0** | Toàn bộ hệ thống chạy bằng 1 file `docker-compose.yml`, báo cáo tổng hợp chi tiết hơn 10 trang chuẩn format ICTU, kịch bản demo rõ ràng. | **1.0 / 1.0** |
+| **7. Tổng thể & Trình bày** | **1.0** | Toàn bộ hệ thống chạy bằng 1 file `docker-compose.yml`, báo cáo tổng hợp chi tiết chuẩn format ICTU, kịch bản demo rõ ràng. | **1.0 / 1.0** |
 | **TỔNG ĐIỂM** | **10.0** | **Hệ thống hoàn thiện 100% các yêu cầu kỹ thuật và nghiệp vụ** | **10.0 / 10.0** |
 
-## 8.4. Kết luận và Hướng phát triển
-Hệ thống **Quản lý Nhà hàng / Order (Đề 12)** đã được triển khai thành công, đáp ứng đầy đủ và vượt mức các tiêu chuẩn kỹ thuật của học phần Triển khai và Quản trị Hệ thống Phần mềm. Dự án chứng minh khả năng áp dụng linh hoạt các công nghệ container hóa hiện đại trong việc xây dựng một hạ tầng phần mềm an toàn, có khả năng tự phục hồi, giám sát chủ động và truy vết sự cố nhanh chóng.
+## 8.4. Kết luận và Hướng phát triển Đề tài
+Hệ thống **Quản lý Nhà hàng & Đặt món (Order) - Đề 12** đã được triển khai thành công, đáp ứng đầy đủ và vượt mức các tiêu chuẩn kỹ thuật của học phần Triển khai và Quản trị Hệ thống Phần mềm. Dự án chứng minh khả năng áp dụng linh hoạt các công nghệ container hóa hiện đại trong việc xây dựng một hạ tầng phần mềm an toàn, có khả năng tự phục hồi, giám sát chủ động và truy vết sự cố nhanh chóng.
 
 *Hướng phát triển trong tương lai:*
 - Mở rộng kiến trúc sang cụm điều phối container Kubernetes (K8s) với cơ chế tự động mở rộng (Horizontal Pod Autoscaling - HPA).
@@ -485,6 +505,6 @@ Hệ thống **Quản lý Nhà hàng / Order (Đề 12)** đã được triển 
 - Bổ sung hệ thống cảnh báo tức thời qua Telegram Bot / Email thông qua Prometheus Alertmanager khi có sự cố hạ tầng.
 
 ---
-*Thái Nguyên, ngày 11 tháng 10 năm 2026*  
+*Thái Nguyên, năm 2026*  
 **Sinh viên thực hiện:**  
 **Hồ Quang Huy (DTC245200862)**
