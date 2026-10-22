@@ -196,20 +196,30 @@ def customer_menu():
 @role_required('customer', 'admin')
 def customer_order():
     menu_item_id = request.form.get('menu_item_id')
-    quantity = int(request.form.get('quantity', 1))
+    try:
+        quantity = int(request.form.get('quantity', 1))
+        if quantity <= 0:
+            flash('Số lượng món ăn phải lớn hơn 0!', 'danger')
+            return redirect(url_for('customer_menu'))
+    except (ValueError, TypeError):
+        flash('Số lượng không hợp lệ!', 'danger')
+        return redirect(url_for('customer_menu'))
+        
     order_type = request.form.get('order_type', 'dine_in')
     table_number = request.form.get('table_number', 'Mang về')
     note = request.form.get('note', '')
     
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM menu_items WHERE id = %s;", (menu_item_id,))
+    # Khóa dòng để tránh race condition khi nhiều người cùng đặt món cuối cùng
+    cur.execute("SELECT * FROM menu_items WHERE id = %s FOR UPDATE;", (menu_item_id,))
     item = cur.fetchone()
     
     if not item or not item['is_available'] or item['stock_quantity'] < quantity:
-        flash('Món ăn đã hết suất hoặc không đủ số lượng tồn kho!', 'danger')
+        conn.rollback()
         cur.close()
         conn.close()
+        flash('Món ăn đã hết suất hoặc không đủ số lượng tồn kho!', 'danger')
         return redirect(url_for('customer_menu'))
         
     price = float(item['price'])
@@ -340,13 +350,25 @@ def staff_order_status(order_id):
     status = request.form.get('status')
     conn = get_db()
     cur = conn.cursor()
+    
+    # Lấy trạng thái hiện tại của đơn hàng trước khi cập nhật
+    cur.execute("SELECT status, table_number FROM orders WHERE id = %s;", (order_id,))
+    res = cur.fetchone()
+    old_status = res['status'] if res else None
+    t_num = res['table_number'] if res else None
+    
     cur.execute("UPDATE orders SET status = %s, updated_at = NOW() WHERE id = %s;", (status, order_id))
     
+    # Nếu đơn hàng bị hủy từ trạng thái đang xử lý (pending, cooking, served), hoàn lại số lượng vào tồn kho
+    if status == 'cancelled' and old_status in ['pending', 'cooking', 'served']:
+        cur.execute("SELECT menu_item_id, quantity FROM order_items WHERE order_id = %s;", (order_id,))
+        cancelled_items = cur.fetchall()
+        for it in cancelled_items:
+            cur.execute("UPDATE menu_items SET stock_quantity = stock_quantity + %s WHERE id = %s;", (it['quantity'], it['menu_item_id']))
+        logger.info("Đã hoàn trả tồn kho suất ăn do hủy đơn", extra={'order_id': order_id, 'items_count': len(cancelled_items)})
+    
     if status in ['completed', 'cancelled']:
-        cur.execute("SELECT table_number FROM orders WHERE id = %s;", (order_id,))
-        res = cur.fetchone()
-        if res and res['table_number'] and res['table_number'] != 'Mang về':
-            t_num = res['table_number']
+        if t_num and t_num != 'Mang về':
             cur.execute("SELECT COUNT(*) as cnt FROM orders WHERE table_number = %s AND status IN ('pending', 'cooking', 'served');", (t_num,))
             if cur.fetchone()['cnt'] == 0:
                 cur.execute("UPDATE tables SET status = 'available' WHERE table_number = %s;", (t_num,))
