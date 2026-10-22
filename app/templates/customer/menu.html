@@ -13,12 +13,12 @@
 </div>
 
 <!-- Danh mục món ăn -->
-<div class="d-flex gap-2 mb-4 overflow-auto pb-2">
-    <a href="/customer/menu" class="btn {% if not active_cat %}btn-success{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">
+<div class="d-flex gap-2 mb-4 overflow-auto pb-2 align-items-center">
+    <a href="/customer/menu" class="btn btn-sm {% if not active_cat %}btn-success text-white shadow-sm{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 py-1 text-nowrap fw-semibold" style="font-size: 0.85rem;">
         Tất cả món
     </a>
     {% for c in categories %}
-    <a href="/customer/menu?category={{ c.id }}" class="btn {% if active_cat|int == c.id %}btn-success{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 text-nowrap">
+    <a href="/customer/menu?category={{ c.id }}" class="btn btn-sm {% if active_cat|int == c.id %}btn-success text-white shadow-sm{% else %}btn-outline-secondary{% endif %} rounded-pill px-3 py-1 text-nowrap fw-semibold" style="font-size: 0.85rem;">
         {{ c.name }}
     </a>
     {% endfor %}
@@ -50,14 +50,14 @@
                 <div>
                     <h6 class="fw-bold mb-1 text-dark">{{ m.name }}</h6>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="fs-5 fw-bold text-success">{{ "{:,.0f}".format(m.price) }} đ</span>
+                        <span class="fw-bold text-success" style="font-size: 0.95rem;">{{ "{:,.0f}".format(m.price) }} đ</span>
                         <small class="text-muted"><i class="bi bi-box me-1"></i>Còn: <strong>{{ m.stock_quantity }}</strong></small>
                     </div>
                 </div>
 
                 <div>
                     {% if m.is_available and m.stock_quantity > 0 %}
-                        <button class="btn btn-outline-success w-100 rounded-pill fw-semibold" onclick="openOrderModal('{{ m.id }}', '{{ m.name }}', '{{ m.price }}', '{{ m.stock_quantity }}')">
+                        <button class="btn btn-sm btn-outline-success w-100 rounded-pill fw-semibold py-1" onclick="openOrderModal('{{ m.id }}', '{{ m.name }}', '{{ m.price }}', '{{ m.stock_quantity }}')">
                             <i class="bi bi-cart-plus me-1"></i> Đặt món này
                         </button>
                     {% else %}

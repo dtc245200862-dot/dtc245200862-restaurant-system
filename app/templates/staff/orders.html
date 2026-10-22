@@ -1,7 +1,7 @@
 {% extends "staff/base_staff.html" %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-receipt me-2 text-primary"></i>Quản lý Đơn hàng Sinh viên đặt</h3>
+    <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-receipt me-2 text-primary"></i>Quản lý Đơn đặt món Nhà hàng</h3>
     <span class="badge bg-primary fs-6 px-3 py-2">Tổng đơn: {{ orders|length }}</span>
 </div>
 
@@ -24,7 +24,7 @@
                 <tr>
                     <td><span class="badge bg-light text-dark border">#{{ o.id }}</span></td>
                     <td><strong>{{ o.customer_name }}</strong></td>
-                    <td>{{ o.items or 'Chưa rõ' }}</td>
+                    <td><span class="fw-semibold text-primary">{{ o.items_summary or "Chưa có món" }}</span></td>
                     <td>
                         <span class="badge bg-secondary">
                             {% if o.order_type == 'dine_in' %}{{ o.table_number }}{% else %}Mang về{% endif %}

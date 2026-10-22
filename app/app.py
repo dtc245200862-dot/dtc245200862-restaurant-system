@@ -331,7 +331,7 @@ def staff_orders():
     cur = conn.cursor()
     cur.execute("""
         SELECT o.*, 
-               STRING_AGG(CONCAT(m.name, ' (x', oi.quantity, ')'), ', ') as items
+               STRING_AGG(CONCAT(m.name, ' (x', oi.quantity, ')'), ', ') as items_summary
         FROM orders o
         LEFT JOIN order_items oi ON o.id = oi.order_id
         LEFT JOIN menu_items m ON oi.menu_item_id = m.id
