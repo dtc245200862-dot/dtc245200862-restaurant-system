@@ -9,7 +9,7 @@ from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_
 from pythonjsonlogger import jsonlogger
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'canteen-secure-secret-2026-dtc245200862')
+app.secret_key = os.getenv('SECRET_KEY', 'restaurant-secure-secret-2026-dtc245200862')
 
 # Structured JSON Logging
 log_handler = logging.StreamHandler()
